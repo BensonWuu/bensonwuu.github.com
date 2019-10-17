@@ -353,7 +353,7 @@
 
 <p><strong>3、使用Let’s Encrypt验证域名所有者</strong></p>
 <blockquote>
-<p>CA 在签发 DV（Domain Validation）证书时，需要验证域名所有权。传统 CA 的验证方式一般是往 <a href="mailto:admin@yoursite.com" target="_blank" rel="noopener">admin@yoursite.com</a> 发验证邮件，而 Let’s Encrypt 是在你的服务器指定目录下生成一个随机验证文件，再通过创建 CSR 时指定的域名访问，如果可以访问则表明你对这个域名有控制权。</p>
+<p>CA 在签发 DV（Domain Validation）证书时，需要验证域名所有权。传统 CA 的验证方式一般是往 <a href="mailto:admin@yoursite.com">admin@yoursite.com</a> 发验证邮件，而 Let’s Encrypt 是在你的服务器指定目录下生成一个随机验证文件，再通过创建 CSR 时指定的域名访问，如果可以访问则表明你对这个域名有控制权。</p>
 </blockquote>
 <ul>
 <li>配置<strong>验证服务</strong>，这里我在站点下建立了一个challenges文件夹存放验证文件</li>
