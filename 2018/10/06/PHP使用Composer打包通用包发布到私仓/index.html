@@ -18,7 +18,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;emojiLib.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;packages.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;packages_web.png">
-<meta property="og:updated_time" content="2019-10-18T02:53:01.000Z">
+<meta property="og:updated_time" content="2019-10-18T02:59:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;emojiLib.png">
   
@@ -175,33 +175,22 @@
 <li>修改上述步骤中的satis.json文件，添加通用包的gitlat地址到repositories字段中 (见上面“配置satis”一小节的步骤)</li>
 <li>按照“配置satis”一小节步骤走完后，通用包已引入，将代码提交到packages-benson-com的gitlab仓库，此时通用包已上传到私仓。</li>
 </ol>
-<blockquote>
 <p>优点：</p>
-</blockquote>
 <ol>
 <li>比较简单，</li>
 <li>也避免了开发人员不熟悉composer update和install执行命令而升级了依赖包的版本造成不可预料问题的情况。</li>
 </ol>
-<blockquote>
 <p>缺点：<a href="https://docs.phpcomposer.com/faqs/should-i-commit-the-dependencies-in-my-vendor-directory.html" target="_blank" rel="noopener">官方说法</a></p>
-</blockquote>
-<blockquote>
 <p>个人觉得在现有情况下，自己的包数量不多且不庞大，这些说法还是可接受的。</p>
-</blockquote>
 <hr>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>1、Composer主要使用命令空间配合自动加载原理实现了一套方便的自动加载机制<br>自动加载主要带来的好处有：</p>
-<blockquote>
 <ul>
 <li>使用类之前无需 include / require</li>
-</ul>
-</blockquote>
-<ul>
 <li>使用类的时候才会 include / require 文件，实现了 lazy loading ，避免了 include / require 多余文件。</li>
 <li>无需考虑引入 类的实际磁盘地址 ，实现了逻辑和实体文件的分离。</li>
 </ul>
 <p>2、各个语言工具都有自己的包管理器，各种各样开源的包避免了自己重复造轮，一条命令开箱即用，提高开发效率。</p>
 <p>3、借此机会抽离封装常用功能类，建立私仓，了解下Composer基本原理和使用，<br>了解Composer如何运用的PHP的自动加载机制，以及PHP自动加载从__autoload时代演变到spl_autoload_register()</p>
-<blockquote>
 <p>参考文章：</p>
 <ol>
 <li><a href="https://tlanyan.me/php-review-create-self-composer-package/" target="_blank" rel="noopener">PHP回顾之创建自己的Composer包</a></li>
@@ -211,7 +200,6 @@
 <li><a href="https://segmentfault.com/a/1190000014948542" target="_blank" rel="noopener">深入解析 composer 的自动加载原理</a></li>
 <li><a href="http://leoyang90.cn/2017/03/13/Composer%20Autoload%20Source%20Reading%20%E2%80%94%E2%80%94%20Start%20and%20Initialize" target="_blank" rel="noopener">Composer的Autoload源码实现</a></li>
 </ol>
-</blockquote>
 
       
     </div>
