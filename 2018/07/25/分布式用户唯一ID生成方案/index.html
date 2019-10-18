@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Benson&#39;s blog">
 <meta property="og:description" content="记录一套支撑了千亿数据量的分布式ID唯一自增ID生成方式，基本思想还是Twitter的snowflake算法">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-10-18T01:29:02.000Z">
+<meta property="og:updated_time" content="2019-10-18T03:04:13.000Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Benson&#39;s blog" type="application/atom+xml">
@@ -246,9 +246,7 @@
 <p>避免了每次生成ID都要访问数据库并带来压力，提高性能</p>
 <p>缺点：</p>
 <p>属于本地生成策略，存在单点故障，服务重启造成ID不连续。但考虑结合的业务，由于用户ID不需要有序和递增只需要不同，因此并不存在此问题。</p>
-<blockquote>
 <p>相关可参考文章：<br><a href="https://juejin.im/post/5b3a23746fb9a024e15cad79" target="_blank" rel="noopener">分布式ID生成方案</a></p>
-</blockquote>
 
       
     </div>

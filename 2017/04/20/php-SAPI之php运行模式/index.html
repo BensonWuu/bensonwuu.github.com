@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Benson&#39;s blog">
 <meta property="og:description" content="之前稍微看过，技术分享会又突然提起，索性整理下，加深理解和吹水能力2333">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2017-04-20T07:32:54.000Z">
+<meta property="og:updated_time" content="2019-10-18T03:05:27.000Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Benson&#39;s blog" type="application/atom+xml">
@@ -96,20 +96,13 @@
 <h3 id="一切的开始-SAPI接口"><a href="#一切的开始-SAPI接口" class="headerlink" title="一切的开始: SAPI接口"></a>一切的开始: SAPI接口</h3><p>大多数的Web服务器都不能解析PHP代码，因此需要一个PHP处理器程序解析PHP代码，那么我们怎么连接服务器与PHP处理器呢？也就是说服务器与PHP处理器如何通信？</p>
 <p>其实就是通过SAPI（Server Application Programming Interface服务器端应用编程端口），简单来说，SAPI指的是PHP具体应用的编程接口， 脚本执行的开始都是以SAPI接口实现开始的。不同的SAPI接口实现会完成他们特定的工作，<br><strong>常见的php cgi，fastcgi，apache模块这些运行模式，就是SAPI接口的不同实现方式</strong></p>
 <hr>
-<h3 id="CGI运行模式"><a href="#CGI运行模式" class="headerlink" title="CGI运行模式"></a>CGI运行模式</h3><h4 id="CGI简介"><a href="#CGI简介" class="headerlink" title="CGI简介"></a>CGI简介</h4><blockquote>
-<p><strong>CGI描述了客户端和程序之间传输数据的一种标准</strong></p>
-</blockquote>
+<h3 id="CGI运行模式"><a href="#CGI运行模式" class="headerlink" title="CGI运行模式"></a>CGI运行模式</h3><h4 id="CGI简介"><a href="#CGI简介" class="headerlink" title="CGI简介"></a>CGI简介</h4><p><strong>CGI描述了客户端和程序之间传输数据的一种标准</strong></p>
 <p>CGI全称是“通用网关接口”(Common Gateway Interface)，它可以让一个客户端，从网页浏览器向执行在Web服务器上的程序请求数据。CGI的一个目的是要独立于任何语言的，所以CGI可以用任何一种语言编写，只要这种语言具有标准输入、输出和环境变量。 如php，perl，tcl等。</p>
 <h4 id="CGI运行过程"><a href="#CGI运行过程" class="headerlink" title="CGI运行过程"></a>CGI运行过程</h4><p>CGI方式在遇到连接请求（用户 请求）先要创建cgi的子进程，激活一个CGI进程，然后各种初始化执行环境的操作，后再处理请求，处理完后结束这个子进程，并且每个请求都会执行这些步骤，这就是fork-and-execute模式。所以用cgi方式的服务器有多少连接请求就会有多少cgi子进程，<strong>子进程反复加载</strong>是cgi性能低下的主要原因。都会当用户请求数量非常多时，会大量挤占系统的资源如内 存，CPU时间等，造成效能低下。</p>
 <hr>
 <h3 id="FastCGI运行模式"><a href="#FastCGI运行模式" class="headerlink" title="FastCGI运行模式"></a>FastCGI运行模式</h3><h4 id="FastCGI与PHP-FPM"><a href="#FastCGI与PHP-FPM" class="headerlink" title="FastCGI与PHP-FPM"></a>FastCGI与PHP-FPM</h4><p><strong>1、FastCGI简介</strong></p>
-<blockquote>
 <p><strong>fast-cgi 是cgi的升级版本，像是一个常驻(long-lived)型的cgi， 它可以一直执行，在请求到达时不会花费时间去fork一个进程，以此来处理解决CGI为人诟病的fork-and-execute 模式带来的性能低下问题。</strong>它还支持分布式的运算, 即 FastCGI 程序可以在网站服务器以外的主机上执行并且接受来自其它网站服务器来的请求。</p>
-</blockquote>
-<p><strong>2、PHP-FPM简介</strong></p>
-<blockquote>
-<p>PHP-FPM就是针对于PHP的FastCGI的一种实现，他负责管理一个进程池，来处理来自Web服务器的请求。<br>但是PHP-FPM仅仅是个“PHP FastCGI 进程管理器”, 它仍会调用PHP解释器本身来处理请求，PHP解释器(在Windows下)就是PHP-cgi.exe。</p>
-</blockquote>
+<p><strong>2、PHP-FPM简介</strong><br>PHP-FPM就是针对于PHP的FastCGI的一种实现，他负责管理一个进程池，来处理来自Web服务器的请求。<br>但是PHP-FPM仅仅是个“PHP FastCGI 进程管理器”, 它仍会调用PHP解释器本身来处理请求，PHP解释器(在Windows下)就是PHP-cgi.exe。</p>
 <h4 id="php-FastCGI工作原理"><a href="#php-FastCGI工作原理" class="headerlink" title="php-FastCGI工作原理"></a>php-FastCGI工作原理</h4><ul>
 <li>Web Server启动时载入FastCGI进程管理器(即php-fpm)（IIS ISAPI或Apache Module)</li>
 <li>FastCGI进程管理器自身初始化，启动多个CGI解释器进程 (可见多个php-cgi.exe或php-cig)并等待来自Web Server的连接；</li>
@@ -129,9 +122,7 @@
 <li>从性能上说，FastCGI的会在一个进程中<strong>依次完成多个请求</strong>，以达到提高效率的目的，大多数FastCGI实现（如php-fpm）都会维护一个进程池。</li>
 </ul>
 <hr>
-<h3 id="CLI模式"><a href="#CLI模式" class="headerlink" title="CLI模式"></a>CLI模式</h3><blockquote>
-<p>PHP-CLI是PHP Command Line Interface的简称，就是PHP在命令行运行的接口，区别于在Web服务器上运行的PHP环境（PHP-CGI，ISAPI等）。<br>我们在Linux下经常使用”php –m”查找PHP安装了那些扩展就是PHP命令行运行模式；</p>
-</blockquote>
+<h3 id="CLI模式"><a href="#CLI模式" class="headerlink" title="CLI模式"></a>CLI模式</h3><p>PHP-CLI是PHP Command Line Interface的简称，就是PHP在命令行运行的接口，区别于在Web服务器上运行的PHP环境（PHP-CGI，ISAPI等）。<br>我们在Linux下经常使用”php –m”查找PHP安装了那些扩展就是PHP命令行运行模式；</p>
 <hr>
 <h3 id="Web模块模式"><a href="#Web模块模式" class="headerlink" title="Web模块模式"></a>Web模块模式</h3><p><strong>Apache等Web服务器运行的模式</strong></p>
 <p>模块模式是以mod_php5模块的形式集成，此时mod_php5模块的作用是接收Apache传递过来的PHP文件请求，并处理这些请求，然后将处理后的结果返回给Apache。如果我们在Apache启动前在其配置文件中配置好了PHP模块（mod_php5）,在Apache启动的时候启动此模块以接受PHP文件的请求。</p>
@@ -142,9 +133,7 @@
 <h3 id="ISAPI模式"><a href="#ISAPI模式" class="headerlink" title="ISAPI模式"></a>ISAPI模式</h3><p>ISAPI（Internet Server Application Program Interface）是微软提供的一套面向Internet服务的API接口，一个ISAPI的DLL，可以在被用户请求激活后长驻内存，等待用户的另一个请求，还可以在一个DLL里设置多个用户请求处理函数，此外，ISAPI的DLL应用程序和WWW服务器处于同一个进程中，效率要显著高于CGI。（由于微软的排他性，只能运行于windows环境）</p>
 <p>PHP作为Apache模块，Apache服务器在系统启动后，预先生成多个进程副本驻留在内存中，一旦有请求出现，就立即使用这些空余的子进程进行处理，这样就不存在生成子进程造成的延迟了。这些服务器副本在处理完一次HTTP请求之后并不立即退出，而是停留在计算机中等待下次请求。对于客户浏览器的请求反应更快，性能较高。</p>
 <h3 id="目前流行stack"><a href="#目前流行stack" class="headerlink" title="目前流行stack"></a>目前流行stack</h3><p>目前在HTTPServer这块基本可以看到有三种stack比较流行：<br>（1）Apache+mod_php5<br>（2）lighttp+spawn-fcgi<br>（3）nginx+PHP-FPM</p>
-<blockquote>
 <p>到处参考资料，整理下只是为了自己有处可寻。。。</p>
-</blockquote>
 
       
     </div>

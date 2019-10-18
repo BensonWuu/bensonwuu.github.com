@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Benson&#39;s blog">
 <meta property="og:description" content="什么都不说，跟上潮流搞下Https，体验下fashion!">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2017-10-18T16:19:10.000Z">
+<meta property="og:updated_time" content="2019-10-18T03:16:15.000Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Benson&#39;s blog" type="application/atom+xml">
@@ -96,9 +96,7 @@
 <h3 id="预备知识和概念简介"><a href="#预备知识和概念简介" class="headerlink" title="预备知识和概念简介"></a>预备知识和概念简介</h3><ul>
 <li>HTTPS基本原理：</li>
 </ul>
-<blockquote>
 <p>HTTPS其实是由两部分组成：HTTP + <a href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html" target="_blank" rel="noopener">SSL / TLS(强烈建议一看)</a>，也就是在HTTP上又加了一层处理加密信息的模块。服务端和客户端的信息传输都会通过TLS进行加密，所以传输的数据都是加密后的数据。</p>
-</blockquote>
 <ul>
 <li><p><strong>证书(Cerificate)：</strong>的基本作用是将一个公钥和安全个体(个人、公司、组织等)的名字绑定在一起，通常以.crt或.pem为后缀，表示证书文件</p>
 </li>
@@ -111,115 +109,94 @@
 <li><p><a href="https://letsencrypt.org/" target="_blank" rel="noopener">Let’s Encrypt</a>：免费证书发布机构</p>
 </li>
 </ul>
-<blockquote>
 <p>网摘：Let’s Encrypt是去年十二月份开始公测的，可以免费申请证书。其签发的证书已经获得了交叉信任，已经能被所有主流浏览器信任了。交叉签名来自 IdenTrust Root CA。</p>
-</blockquote>
 <ul>
 <li><a href="https://github.com/diafygi/acme-tiny" target="_blank" rel="noopener">acme-tiny</a>：好用的申请证书开源小工具</li>
 </ul>
 <hr>
 <h3 id="实现https配置步骤"><a href="#实现https配置步骤" class="headerlink" title="实现https配置步骤"></a>实现https配置步骤</h3><h4 id="获取证书"><a href="#获取证书" class="headerlink" title="获取证书"></a>获取证书</h4><p><strong>1、安装Apache支持SSL/TLS</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install mod_ssl openssl</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install mod_ssl openssl</span><br></pre></td></tr></table></figure>
 
 <p><strong>2、 创建一个目录，例如ssl，用来存放各种临时文件和最后的证书文件，我统一放在httpd配置文件夹下/etc/httpd/ssl</strong></p>
 <ul>
 <li>openssl建立Let’s Encrypt<strong>账户的私钥</strong></li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa 4096 &gt; account.key</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa <span class="number">4096</span> &gt; account.key</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>openssl生成<strong>域名的私钥</strong></li>
 </ul>
-<blockquote>
 <p>根据证书不同类型，域名私钥也可以选择 RSA 和 ECC 两种不同类型。以下两种方式请根据实际情况二选一</p>
-</blockquote>
 <p>（1）创建<strong>RSA私钥</strong>（兼容性好）：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa 4096 &gt; domain.key</span><br></pre></td></tr></table></figure>
 
 <p>（2）创建 <strong>ECC 私钥</strong>（部分老旧操作系统、浏览器不支持。优点是证书体积小）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openssl ecparam -genkey -name secp256r1 | openssl ec -out domain.key</span><br><span class="line"></span><br><span class="line">openssl ecparam -genkey -name secp384r1 | openssl ec -out domain.key</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openssl ecparam -genkey -name secp256r1 | openssl ec -out domain.key</span><br><span class="line"></span><br><span class="line">openssl ecparam -genkey -name secp384r1 | openssl ec -out domain.key</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>找到openssl.cnf文件位置（后续步骤需要）</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@benson ~]# locate openssl.cnf</span><br><span class="line">/etc/pki/tls/openssl.cnf</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@benson ~]# locate openssl.cnf</span><br><span class="line">/etc/pki/tls/openssl.cnf</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>用domain.key私钥生成 CSR文件（Certificate Signing Request，证书签名请求）</li>
 </ul>
-<blockquote>
 <p>CSR中推荐至少把域名带 www 和不带 www 的两种情况都加进去，其它子域可以根据需要添加（目前一张证书最多可以包含 100 个域名），openssl.cnf文件和域名自行修改</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -sha256 -key domain.key -subj &quot;/&quot; -reqexts SAN -config &lt;(cat /etc/pki/tls/openssl.cnf &lt;(printf &quot;[SAN]\nsubjectAltName=DNS:bensonwu.cn,DNS:www.bensonwu.cn&quot;)) &gt; domain.csr</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -<span class="keyword">new</span> -sha256 -key domain.key -subj <span class="string">"/"</span> -reqexts SAN -config &lt;(cat /etc/pki/tls/openssl.cnf &lt;(printf <span class="string">"[SAN]\nsubjectAltName=DNS:bensonwu.cn,DNS:www.bensonwu.cn"</span>)) &gt; domain.csr</span><br></pre></td></tr></table></figure>
 
-<p><strong>3、使用Let’s Encrypt验证域名所有者</strong></p>
-<blockquote>
-<p>CA 在签发 DV（Domain Validation）证书时，需要验证域名所有权。传统 CA 的验证方式一般是往 <a href="mailto:admin@yoursite.com" target="_blank" rel="noopener">admin@yoursite.com</a> 发验证邮件，而 Let’s Encrypt 是在你的服务器指定目录下生成一个随机验证文件，再通过创建 CSR 时指定的域名访问，如果可以访问则表明你对这个域名有控制权。</p>
-</blockquote>
+<p><strong>3、使用Let’s Encrypt验证域名所有者</strong><br>CA 在签发 DV（Domain Validation）证书时，需要验证域名所有权。传统 CA 的验证方式一般是往 <a href="mailto:admin@yoursite.com" target="_blank" rel="noopener">admin@yoursite.com</a> 发验证邮件，而 Let’s Encrypt 是在你的服务器指定目录下生成一个随机验证文件，再通过创建 CSR 时指定的域名访问，如果可以访问则表明你对这个域名有控制权。</p>
 <ul>
 <li>配置<strong>验证服务</strong>，这里我在站点下建立了一个challenges文件夹存放验证文件</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /var/www</span><br><span class="line">mkdir challenges</span><br><span class="line">sudo chown apache challenges -R</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /<span class="keyword">var</span>/www</span><br><span class="line">mkdir challenges</span><br><span class="line">sudo chown apache challenges -R</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>相应需要https的域名<strong>虚拟主机配置</strong></li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//vim /etc/httpd/conf.d/vhost.conf</span><br><span class="line">&lt;VirtualHost *:80&gt;</span><br><span class="line">    ServerAdmin root@benson</span><br><span class="line">    ServerName blog.benson.cn</span><br><span class="line">    ServerAlias blog.benson.cn</span><br><span class="line">    DocumentRoot /var/www/blog_hexo</span><br><span class="line">    Alias /.well-known/acme-challenge &quot;/var/www/challenges&quot;</span><br><span class="line">&lt;/VirtualHost&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//vim /etc/httpd/conf.d/vhost.conf</span></span><br><span class="line">&lt;VirtualHost *:<span class="number">80</span>&gt;</span><br><span class="line">    ServerAdmin root<span class="meta">@benson</span></span><br><span class="line">    ServerName blog.benson.cn</span><br><span class="line">    ServerAlias blog.benson.cn</span><br><span class="line">    DocumentRoot /<span class="keyword">var</span>/www/blog_hexo</span><br><span class="line">    Alias /.well-known/acme-challenge <span class="string">"/var/www/challenges"</span></span><br><span class="line">&lt;/VirtualHost&gt;</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>使用acme-tiny<strong>正式申请证书</strong></li>
 </ul>
-<blockquote>
 <p>进入目录/etc/httpd/ssl，各种需要的文件我统一存放在这里</p>
-</blockquote>
 <p>（1）下载<strong>acme-tiny</strong>工具</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/diafygi/acme-tiny/master/acme_tiny.py</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https:<span class="comment">//raw.githubusercontent.com/diafygi/acme-tiny/master/acme_tiny.py</span></span><br></pre></td></tr></table></figure>
 
 <p>（2）指定账户私钥、CSR以及验证目录，验证域名所有者并<strong>初步生成网站证书signed.crt</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python acme_tiny.py --account-key ./account.key --csr ./domain.csr --acme-dir /var/www/challenges/ &gt; ./signed.crt</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python acme_tiny.py --account-key ./account.key --csr ./domain.csr --acme-dir /<span class="keyword">var</span>/www/challenges/ &gt; ./signed.crt</span><br></pre></td></tr></table></figure>
 
-<blockquote>
 <p>申请过程Let’s Encrypt会先验证网站所有权，将往/var/www/challenges/ 里面写入一个回调用认证文件，验证能访问后，文件会自动删除</p>
-</blockquote>
-<blockquote>
 <p>验证服务中虚拟主机没配置好，会导致验证失败，可能出现错误如下</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ValueError: Wrote file to /var/www/challenges/oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg, but couldn&apos;t download http://bensonwu.cn/.well-known/acme-challenge/oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ValueError: Wrote file to /<span class="keyword">var</span>/www/challenges/oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg, but couldn<span class="string">'t download http://bensonwu.cn/.well-known/acme-challenge/oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg</span></span><br></pre></td></tr></table></figure>
 <p><strong>弄的时候被网上一些资料坑了，很多都说是因为国外DNS无法解析国内的域名。真是坑。有时候不稳定，多试几次，不行再排错</strong></p>
 <p>（3）下载 Let’s Encrypt 的<strong><a href="http://blog.sina.com.cn/s/blog_53ed87c10102vn8b.html" target="_blank" rel="noopener">中间证书</a></strong>形成较完整证书链，避免出错，生成真正使用的<strong>chained.pem证书文件</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem &gt; intermediate.pem</span><br><span class="line">cat signed.crt intermediate.pem &gt; chained.pem</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget -O - https:<span class="comment">//letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem &gt; intermediate.pem</span></span><br><span class="line">cat signed.crt intermediate.pem &gt; chained.pem</span><br></pre></td></tr></table></figure>
 
 <p><strong>至此，真正生成网站证书chained.pem</strong></p>
 <hr>
 <h4 id="安装证书"><a href="#安装证书" class="headerlink" title="安装证书"></a>安装证书</h4><p>1、配置00-ssl.conf文件，<strong>开启证书认证</strong>（前面已安装openssl）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">//vim /etc/httpd/conf.modules.d/00-ssl.conf</span><br><span class="line"></span><br><span class="line">LoadModule ssl_module modules/mod_ssl.so</span><br><span class="line"></span><br><span class="line">&lt;IfModule mod_ssl.c&gt;</span><br><span class="line">  &lt;VirtualHost _default_:443&gt;</span><br><span class="line"></span><br><span class="line">    ServerAdmin root@benson</span><br><span class="line">    ServerName bensonwu.cn</span><br><span class="line">    ServerAlias bensonwu.cn</span><br><span class="line"></span><br><span class="line">    DocumentRoot /var/www</span><br><span class="line"></span><br><span class="line">    &lt;Directory /var/www&gt;</span><br><span class="line">      Options Indexes FollowSymLinks MultiViews</span><br><span class="line">      AllowOverride all</span><br><span class="line">      Order allow,deny</span><br><span class="line">      allow from all</span><br><span class="line">    &lt;/Directory&gt;</span><br><span class="line"></span><br><span class="line">    SSLEngine on</span><br><span class="line">    SSLCertificateFile      /etc/httpd/ssl/chained.pem</span><br><span class="line">    SSLCertificateKeyFile   /etc/httpd/ssl/domain.key</span><br><span class="line">  &lt;/VirtualHost&gt;</span><br><span class="line"></span><br><span class="line">&lt;/IfModule&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//vim /etc/httpd/conf.modules.d/00-ssl.conf</span></span><br><span class="line"></span><br><span class="line">LoadModule ssl_module modules/mod_ssl.so</span><br><span class="line"></span><br><span class="line">&lt;IfModule mod_ssl.c&gt;</span><br><span class="line">  &lt;VirtualHost _default_:<span class="number">443</span>&gt;</span><br><span class="line"></span><br><span class="line">    ServerAdmin root<span class="meta">@benson</span></span><br><span class="line">    ServerName bensonwu.cn</span><br><span class="line">    ServerAlias bensonwu.cn</span><br><span class="line"></span><br><span class="line">    DocumentRoot /<span class="keyword">var</span>/www</span><br><span class="line"></span><br><span class="line">    &lt;Directory /<span class="keyword">var</span>/www&gt;</span><br><span class="line">      Options Indexes FollowSymLinks MultiViews</span><br><span class="line">      AllowOverride all</span><br><span class="line">      Order allow,deny</span><br><span class="line">      allow from all</span><br><span class="line">    &lt;/Directory&gt;</span><br><span class="line"></span><br><span class="line">    SSLEngine on</span><br><span class="line">    SSLCertificateFile      /etc/httpd/ssl/chained.pem</span><br><span class="line">    SSLCertificateKeyFile   /etc/httpd/ssl/domain.key</span><br><span class="line">  &lt;/VirtualHost&gt;</span><br><span class="line"></span><br><span class="line">&lt;/IfModule&gt;</span><br></pre></td></tr></table></figure>
 
-<blockquote>
 <p>https是通过443端口访问的，因此这里需要重新配置类似虚拟主机一样的配置。<br>另外也可到/etc/httpd/conf.d/httpd.conf中配置上面这一块内容。</p>
-</blockquote>
 <p>2、重启apache</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart httpd</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart httpd</span><br></pre></td></tr></table></figure>
 
 <p><strong>此时https已可以访问成功！</strong></p>
 <hr>
-<h3 id="htaccess配置强制http-切换到https访问"><a href="#htaccess配置强制http-切换到https访问" class="headerlink" title=".htaccess配置强制http 切换到https访问"></a>.htaccess配置强制http 切换到https访问</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//开启rewrite模式后，相应项目根目录文件下建立.htaccess</span><br><span class="line">&lt;IfModule mod_rewrite.c&gt;</span><br><span class="line">  Options +FollowSymlinks</span><br><span class="line">  RewriteEngine On</span><br><span class="line">  RewriteCond %&#123;HTTPS&#125; off</span><br><span class="line">  RewriteRule (.*) https://%&#123;HTTP_HOST&#125;%&#123;REQUEST_URI&#125; [R=301,L]</span><br><span class="line">&lt;/IfModule&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="htaccess配置强制http-切换到https访问"><a href="#htaccess配置强制http-切换到https访问" class="headerlink" title=".htaccess配置强制http 切换到https访问"></a>.htaccess配置强制http 切换到https访问</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//开启rewrite模式后，相应项目根目录文件下建立.htaccess</span></span><br><span class="line">&lt;IfModule mod_rewrite.c&gt;</span><br><span class="line">  Options +FollowSymlinks</span><br><span class="line">  RewriteEngine On</span><br><span class="line">  RewriteCond %&#123;HTTPS&#125; off</span><br><span class="line">  RewriteRule (.*) https:<span class="comment">//%&#123;HTTP_HOST&#125;%&#123;REQUEST_URI&#125; [R=301,L]</span></span><br><span class="line">&lt;/IfModule&gt;</span><br></pre></td></tr></table></figure>
 
-<h3 id="cron定时任务自动更新证书"><a href="#cron定时任务自动更新证书" class="headerlink" title="cron定时任务自动更新证书"></a>cron定时任务自动更新证书</h3><blockquote>
-<p>Let’s Encrypt 签发的证书只有90天的有效期，使用crontab定时更新，一劳永逸</p>
-</blockquote>
+<h3 id="cron定时任务自动更新证书"><a href="#cron定时任务自动更新证书" class="headerlink" title="cron定时任务自动更新证书"></a>cron定时任务自动更新证书</h3><p>Let’s Encrypt 签发的证书只有90天的有效期，使用crontab定时更新，一劳永逸</p>
 <ul>
 <li><p>编写sh脚本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//vim /etc/httpd/ssl/renew_cert.sh</span><br><span class="line">python /etc/httpd/ssl/acme_tiny.py --account-key /etc/httpd/ssl/account.key --csr /etc/httpd/ssl/domain.csr --acme-dir /var/www/challenges/ &gt; /etc/httpd/ssl/signed.crt || exit</span><br><span class="line">wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem &gt; /etc/httpd/ssl/intermediate.pem</span><br><span class="line">cat /etc/httpd/ssl/signed.crt /etc/httpd/ssl/intermediate.pem &gt; /etc/httpd/ssl/chained.pem</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//vim /etc/httpd/ssl/renew_cert.sh</span></span><br><span class="line">python /etc/httpd/ssl/acme_tiny.py --account-key /etc/httpd/ssl/account.key --csr /etc/httpd/ssl/domain.csr --acme-dir /<span class="keyword">var</span>/www/challenges/ &gt; /etc/httpd/ssl/signed.crt || exit</span><br><span class="line">wget -O - https:<span class="comment">//letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem &gt; /etc/httpd/ssl/intermediate.pem</span></span><br><span class="line">cat /etc/httpd/ssl/signed.crt /etc/httpd/ssl/intermediate.pem &gt; /etc/httpd/ssl/chained.pem</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>添加到定时任务中</p>
 </li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//执行crontab -e，输入</span><br><span class="line">0 0 1 * * sh /usr/share/httpd/acme-tiny/renew_cert.sh</span><br><span class="line"></span><br><span class="line">sudo systemctl restart crond.service</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//执行crontab -e，输入</span></span><br><span class="line"><span class="number">0</span> <span class="number">0</span> <span class="number">1</span> * * sh /usr/share/httpd/acme-tiny/renew_cert.sh</span><br><span class="line"></span><br><span class="line">sudo systemctl restart crond.service</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h3 id="（额外）真正整站踏入https"><a href="#（额外）真正整站踏入https" class="headerlink" title="（额外）真正整站踏入https"></a>（额外）真正整站踏入https</h3><blockquote>
-<p>配置完会发现，某些页面会因为头像或像第三方像多说平台的表情使用的是http而提示不是安全链接，只能看这些第三方平台能否这支持配置成https加以避免<br>参考：<a href="https://www.cacher.cc/2016/12/31/duoshuo-https.html" target="_blank" rel="noopener">多说完美https改造</a></p>
-</blockquote>
+<h3 id="（额外）真正整站踏入https"><a href="#（额外）真正整站踏入https" class="headerlink" title="（额外）真正整站踏入https"></a>（额外）真正整站踏入https</h3><p>配置完会发现，某些页面会因为头像或像第三方像多说平台的表情使用的是http而提示不是安全链接，只能看这些第三方平台能否这支持配置成https加以避免<br>参考：<a href="https://www.cacher.cc/2016/12/31/duoshuo-https.html" target="_blank" rel="noopener">多说完美https改造</a></p>
 <hr>
 <h3 id="文章参考"><a href="#文章参考" class="headerlink" title="文章参考"></a>文章参考</h3><p><a href="https://imququ.com/post/letsencrypt-certificate.html#simple_thread" target="_blank" rel="noopener">Let’s Encrypt，免费好用的 HTTPS 证书</a><br><a href="https://gold.xitu.io/entry/56ca7dbf99a6ce005a081298" target="_blank" rel="noopener">升级 https, Let’s Encrypt</a><br><a href="http://www.hi-linux.com/2016/03/15/CentOS%E4%B8%8B%E9%85%8D%E7%BD%AEApache%20HTTPS/" target="_blank" rel="noopener">CentOS下配置Apache HTTPS</a><br><a href="https://blog.yangxitian.cn/2017/01/07/%E5%88%A9%E7%94%A8acme-tiny%E5%AE%9E%E7%8E%B0HTTPS%E5%8A%A0%E5%AF%86%E9%80%9A%E4%BF%A1(CentOS%20&%20Apache" target="_blank" rel="noopener">利用acme-tiny实现HTTPS加密通信</a></p>
 

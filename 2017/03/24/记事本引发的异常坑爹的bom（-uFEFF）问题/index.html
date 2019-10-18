@@ -17,7 +17,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;bom.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;bom2.png">
-<meta property="og:updated_time" content="2017-03-24T11:15:41.000Z">
+<meta property="og:updated_time" content="2019-10-18T03:06:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;bom.png">
   
@@ -96,12 +96,8 @@
 <a id="more"></a>
 
 <hr>
-<blockquote>
 <p>服务器环境： window server 2008。。。</p>
-</blockquote>
-<h4 id="简单暴力，直接下载phpstudy搞定。。。"><a href="#简单暴力，直接下载phpstudy搞定。。。" class="headerlink" title="简单暴力，直接下载phpstudy搞定。。。"></a>简单暴力，直接下载phpstudy搞定。。。</h4><h4 id="坑来了"><a href="#坑来了" class="headerlink" title="坑来了"></a>坑来了</h4><blockquote>
-<p>起因：由于服务器上没有任何编辑器，我想直接丢上代码就算了呗，赶紧搞定，直接在服务器上改点配置就完了，没错，用的记事本。记事本！</p>
-</blockquote>
+<h4 id="简单暴力，直接下载phpstudy搞定。。。"><a href="#简单暴力，直接下载phpstudy搞定。。。" class="headerlink" title="简单暴力，直接下载phpstudy搞定。。。"></a>简单暴力，直接下载phpstudy搞定。。。</h4><h4 id="坑来了"><a href="#坑来了" class="headerlink" title="坑来了"></a>坑来了</h4><p>起因：由于服务器上没有任何编辑器，我想直接丢上代码就算了呗，赶紧搞定，直接在服务器上改点配置就完了，没错，用的记事本。记事本！</p>
 <p>前端ajax请求后台接口正常返回数据</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;code&quot;:&quot;20000&quot;,&quot;response&quot;:&#123;&quot;id&quot;:&quot;1&quot;,&quot;account&quot;:&quot;admin&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>本地一切正常，但由于返回的json格式数据自动加上了红点，jq一直报错json格式不正确。后来在控制台response看到了 {  前面莫名其妙多了一个红点，一开始没注意，真是ri了dog。。（后面解决后效果重现不出来。红点如下图，别在意其他代码。）</strong><br><img src="/img/articleImg/bom.png" alt=""></p>
@@ -109,9 +105,7 @@
 <p>可以啊这报错猝不及防。正常会以为真的是namespace前面多写了其他东西才报的错，但事实没有，而且bom符号代码文件中并不可见，然后沿着这问题找下去，开始傻比一样一直找。找到天荒地老。。仍旧一脸dog逼</p>
 <p>最终得出结论，千万别用记事本编辑PHP。。。。。<br>多么痛的领悟。。。<br>bom和这个符号\uFEFF是什么请自行百度谷歌</p>
 <p><strong>有时候，怕就怕不知道什么问题导致，一股脑浪费一大堆时间做无谓的调试。。长教训</strong></p>
-<blockquote>
 <p>参考：<a href="http://coolnull.com/3685.html" target="_blank" rel="noopener">PHP去掉诡异的BOM \ufeff</a></p>
-</blockquote>
 
       
     </div>
