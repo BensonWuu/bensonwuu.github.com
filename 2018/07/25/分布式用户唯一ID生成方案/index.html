@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>分布式唯一自增ID生成方案 | Benson&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="记录一套支撑了千亿数据量的分布式ID唯一自增ID生成方式，基本思想还是Twitter的snowflake算法">
+<meta name="keywords" content="分布式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式唯一自增ID生成方案">
+<meta property="og:url" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;2018&#x2F;07&#x2F;25&#x2F;%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%A8%E6%88%B7%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88&#x2F;index.html">
+<meta property="og:site_name" content="Benson&#39;s blog">
+<meta property="og:description" content="记录一套支撑了千亿数据量的分布式ID唯一自增ID生成方式，基本思想还是Twitter的snowflake算法">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-10-18T01:29:02.000Z">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Benson&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Benson&#39;s blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">生活就是不停地战斗</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.bensonwu.xyz"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-分布式用户唯一ID生成方案" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/25/%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%A8%E6%88%B7%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/" class="article-date">
+  <time datetime="2018-07-25T11:55:10.000Z" itemprop="datePublished">2018-07-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分布式唯一自增ID生成方案
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>记录一套支撑了千亿数据量的分布式ID唯一自增ID生成方式，基本思想还是Twitter的snowflake算法</p>
+<a id="more"></a>
+
+<hr>
+<p>方案简述：</p>
+<p>挂载定时脚本，每天定时检测预留账号数据表中，status=0(表示未启用)的账号数是否小于某个阈值(100000)，是则推送异步worker重新生成一批status=0的预留账号存入数据表，</p>
+<p>每天定时检测预留账号数据表中，status=1(表示启用但未被使用)的账号数是否小于某个阈值(30000)，是则推送异步worker更新一批status=0的预留账号为status=1，</p>
+<p>新用户注册时，则从数据库获取到status=1的预留账号。</p>
+<p><strong>生成用户唯一ID生成核心过程，直接上代码 + 注释最直观</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 核心函数</span></span><br><span class="line"><span class="function">function <span class="title">_main</span> <span class="params">($params)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    print_r($params);</span><br><span class="line">    <span class="comment">/* 记录已分配的区间 */</span></span><br><span class="line">    $area_uids = array ();</span><br><span class="line">    $area_uids[<span class="string">"A"</span>] = array (<span class="number">0</span>, <span class="number">5000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"B"</span>] = array (<span class="number">5000000</span>, <span class="number">10000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"C"</span>] = array (<span class="number">10000000</span>, <span class="number">15000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"D"</span>] = array (<span class="number">15000000</span>, <span class="number">20000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"E"</span>] = array (<span class="number">20000000</span>, <span class="number">25000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"F"</span>] = array (<span class="number">25000000</span>, <span class="number">30000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"G"</span>] = array (<span class="number">30000000</span>, <span class="number">35000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"H"</span>] = array (<span class="number">35000000</span>, <span class="number">40000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"I"</span>] = array (<span class="number">40000000</span>, <span class="number">45000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"J"</span>] = array (<span class="number">45000000</span>, <span class="number">50000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"K"</span>] = array (<span class="number">50000000</span>, <span class="number">55000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"L"</span>] = array (<span class="number">55000000</span>, <span class="number">60000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"M"</span>] = array (<span class="number">60000000</span>, <span class="number">65000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"N"</span>] = array (<span class="number">65000000</span>, <span class="number">70000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"O"</span>] = array (<span class="number">70000000</span>, <span class="number">75000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"P"</span>] = array (<span class="number">75000000</span>, <span class="number">80000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"Q"</span>] = array (<span class="number">80000000</span>, <span class="number">85000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"R"</span>] = array (<span class="number">85000000</span>, <span class="number">90000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"S"</span>] = array (<span class="number">90000000</span>, <span class="number">95000000</span>);</span><br><span class="line">    $area_uids[<span class="string">"T"</span>] = array (<span class="number">95000000</span>, <span class="number">100000000</span>);</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * user_assign表，自定义区间，预先生成用户ID数字的起始偏移量，</span></span><br><span class="line"><span class="comment">     * 当用完了后，需要再人为或者脚本再预先插入可用的偏移量记录</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 个人以为可以把$area_uids数组配置也放入此表中统一存放而不用代码中配置</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 表数据结构和表数据见代码后文</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="comment">// 获取到'status' =&gt; 0 的所有可用区间数组</span></span><br><span class="line">    $area_list = app(<span class="string">'service.userId.uidRange'</span>)-&gt;getAvailable();</span><br><span class="line">    <span class="keyword">if</span> (!$area_list)</span><br><span class="line">    &#123;</span><br><span class="line">        echo <span class="string">'error: no area'</span>, PHP_EOL;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 随机挑选其中一个可用区间</span></span><br><span class="line">    $temp = $area_list[array_rand($area_list)];</span><br><span class="line">    <span class="keyword">if</span> (!$temp)</span><br><span class="line">    &#123;</span><br><span class="line">        echo <span class="string">'error: temp'</span>, PHP_EOL;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 配合$area_uids数组配置取得offset值和limit值</span></span><br><span class="line">    $offset = $temp[<span class="string">'offset'</span>] + $area_uids[$temp[<span class="string">'area'</span>]][<span class="number">0</span>];</span><br><span class="line">    $limit = $temp[<span class="string">'offset'</span>] + $area_uids[$temp[<span class="string">'area'</span>]][<span class="number">1</span>];</span><br><span class="line">    $st = microtime(<span class="keyword">true</span>);</span><br><span class="line">    $assign = app(<span class="string">'service.userId.userAssign'</span>);</span><br><span class="line">    <span class="keyword">for</span> ($i = $offset; $i &lt; $limit; $i += <span class="number">100000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* 生成数组 */</span></span><br><span class="line">        $temp_range = range($i, $i + <span class="number">100000</span>);</span><br><span class="line">        echo $i . <span class="string">" "</span> . ($i + <span class="number">100000</span>) . <span class="string">"\n"</span>;</span><br><span class="line">        <span class="comment">// 打乱数组，因为用户ID为无序，非递增</span></span><br><span class="line">        shuffle($temp_range);</span><br><span class="line">        $availableUids = [];</span><br><span class="line">        <span class="keyword">if</span> (!empty($temp_range))</span><br><span class="line">        &#123;</span><br><span class="line">            foreach ($temp_range as $key =&gt; $val)</span><br><span class="line">            &#123;</span><br><span class="line">                $is_filter = <span class="keyword">false</span>;</span><br><span class="line">                <span class="comment">/**</span></span><br><span class="line"><span class="comment">                 * if elseif均为业务上要求的一些特殊用户ID保留注册段</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">if</span> (preg_match(<span class="string">'/(400|800)&#123;9-11&#125;/'</span>, $val, $matches))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">/* 400/800开头的 如400××××××××、800×××××××× */</span></span><br><span class="line">                    $is_filter = <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                elseif (preg_match(<span class="string">'/^1\d&#123;10&#125;/'</span>, $val, $matches))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">/* 11位数 1开头的不开放 如13xxxxxxxxx */</span></span><br><span class="line">                    $is_filter = <span class="keyword">true</span>;</span><br><span class="line">                &#125;elseif (preg_match(<span class="string">'/(1&#123;6&#125;|2&#123;6&#125;|3&#123;6&#125;|4&#123;6&#125;|5&#123;6&#125;|6&#123;6&#125;|7&#123;6&#125;|8&#123;6&#125;|9&#123;6&#125;|0&#123;6&#125;)/'</span>, $val, $matches))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">/* 带6A以上的 如 333333×××××、××555555××× */</span></span><br><span class="line">                    $is_filter = <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                elseif (preg_match(<span class="string">'/(123456789|987654321)/'</span>, $val, $matches))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">/* 9连顺的 如 123456789×× 、×987654321× */</span></span><br><span class="line">                    $is_filter = <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> ($val &gt;= <span class="number">1440000000</span> &amp;&amp; $val &lt; <span class="number">1445000000</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    $is_filter = <span class="keyword">true</span>;<span class="comment">//保留段 经销商特殊使用</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (!$is_filter)</span><br><span class="line">                &#123;</span><br><span class="line">                    $availableUids[] = $val;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 往user_assign_uid表中批量插入用户ID，默认status=0</span></span><br><span class="line">                <span class="keyword">if</span> ($key % <span class="number">1000</span> === <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!empty($availableUids))</span><br><span class="line">                    &#123;</span><br><span class="line">                        $assign-&gt;addAvailableUids($availableUids);</span><br><span class="line">                        echo <span class="string">"添加"</span> . count($availableUids) . <span class="string">"\n"</span>;</span><br><span class="line">                        $availableUids = [];</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/* 生成残留UID */</span></span><br><span class="line">            <span class="keyword">if</span> ($availableUids)</span><br><span class="line">            &#123;</span><br><span class="line">                $assign-&gt;addAvailableUids($availableUids);</span><br><span class="line">                echo <span class="string">"添加"</span> . count($availableUids) . <span class="string">"\n"</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            unset($availableUids);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">echo <span class="title">microtime</span><span class="params">(<span class="keyword">true</span>)</span> - $st, "\n"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将当前使用的user_assign表的某个区间，设置为已用状态status=1,</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    $res = app(<span class="string">'service.userId.uidRange'</span>)-&gt;setUsed($temp[<span class="string">'id'</span>]);</span><br><span class="line">    echo <span class="string">'setUsed: '</span>;</span><br><span class="line">    var_dump($res);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>user_assign数据表结构</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`user_assign`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT <span class="keyword">COMMENT</span> <span class="string">'ID'</span>,</span><br><span class="line">  <span class="string">`offset`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'起点'</span>,</span><br><span class="line">  <span class="string">`area`</span> <span class="built_in">char</span>(<span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'区间'</span>,</span><br><span class="line">  <span class="string">`status`</span> <span class="built_in">tinyint</span>(<span class="number">1</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'状态'</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>),</span><br><span class="line">  <span class="keyword">KEY</span> <span class="string">`status`</span> (<span class="string">`status`</span>),</span><br><span class="line">  <span class="keyword">KEY</span> <span class="string">`area`</span> (<span class="string">`area`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> AUTO_INCREMENT=<span class="number">40</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8 <span class="keyword">COMMENT</span>=<span class="string">'UID分配表</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>user_assign_uid数据表结构</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`user_assign_uid`</span> (</span><br><span class="line">  <span class="string">`user_id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'用户UID'</span>,</span><br><span class="line">  <span class="string">`status`</span> <span class="built_in">tinyint</span>(<span class="number">1</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span> <span class="keyword">COMMENT</span> <span class="string">'状态'</span>,</span><br><span class="line">  <span class="string">`idc`</span> <span class="built_in">int</span>(<span class="number">5</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`user_id`</span>),</span><br><span class="line">  <span class="keyword">KEY</span> <span class="string">`status`</span> (<span class="string">`status`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8 <span class="keyword">COMMENT</span>=<span class="string">'分配UID'</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>user_assign表部分数据</strong></p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>offset</th>
+<th>area</th>
+<th>status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>500000000</td>
+<td>A</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>500000000</td>
+<td>B</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>500000000</td>
+<td>C</td>
+<td>0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>500000000</td>
+<td>D</td>
+<td>0</td>
+</tr>
+<tr>
+<td>5</td>
+<td>500000000</td>
+<td>E</td>
+<td>0</td>
+</tr>
+<tr>
+<td>6</td>
+<td>500000000</td>
+<td>F</td>
+<td>0</td>
+</tr>
+<tr>
+<td>7</td>
+<td>500000000</td>
+<td>G</td>
+<td>0</td>
+</tr>
+<tr>
+<td>8</td>
+<td>500000000</td>
+<td>H</td>
+<td>0</td>
+</tr>
+<tr>
+<td>9</td>
+<td>500000000</td>
+<td>I</td>
+<td>0</td>
+</tr>
+<tr>
+<td>10</td>
+<td>500000000</td>
+<td>J</td>
+<td>0</td>
+</tr>
+<tr>
+<td>11</td>
+<td>500000000</td>
+<td>K</td>
+<td>0</td>
+</tr>
+<tr>
+<td>12</td>
+<td>500000000</td>
+<td>L</td>
+<td>0</td>
+</tr>
+<tr>
+<td>13</td>
+<td>500000000</td>
+<td>M</td>
+<td>0</td>
+</tr>
+<tr>
+<td>14</td>
+<td>500000000</td>
+<td>N</td>
+<td>0</td>
+</tr>
+<tr>
+<td>15</td>
+<td>500000000</td>
+<td>O</td>
+<td>0</td>
+</tr>
+<tr>
+<td>16</td>
+<td>500000000</td>
+<td>P</td>
+<td>0</td>
+</tr>
+<tr>
+<td>17</td>
+<td>500000000</td>
+<td>Q</td>
+<td>0</td>
+</tr>
+<tr>
+<td>18</td>
+<td>500000000</td>
+<td>R</td>
+<td>0</td>
+</tr>
+<tr>
+<td>19</td>
+<td>500000000</td>
+<td>S</td>
+<td>0</td>
+</tr>
+<tr>
+<td>20</td>
+<td>500000000</td>
+<td>T</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<h3 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h3><p>此种分布式ID生成方法，为批量预生成，</p>
+<p>此方法优点：</p>
+<p>避免了每次生成ID都要访问数据库并带来压力，提高性能</p>
+<p>缺点：</p>
+<p>属于本地生成策略，存在单点故障，服务重启造成ID不连续。但考虑结合的业务，由于用户ID不需要有序和递增只需要不同，因此并不存在此问题。</p>
+<blockquote>
+<p>相关可参考文章：<br><a href="https://juejin.im/post/5b3a23746fb9a024e15cad79" target="_blank" rel="noopener">分布式ID生成方案</a></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2018/07/25/%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%A8%E6%88%B7%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/" data-id="ck1vjaczb000oozn8c4t2300q" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/08/04/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          分布式用户唯一ID生成方案
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/06/16/filter-var%E8%BF%87%E6%BB%A4email%EF%BC%8Curl%EF%BC%8Cip/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">filter_var过滤email，url，ip</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BB%BA%E7%AB%99/">建站</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos/" rel="tag">Centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos-7/" rel="tag">Centos 7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Https/" rel="tag">Https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LAMP/" rel="tag">LAMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apache/" rel="tag">apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/centos/" rel="tag">centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo%E7%9B%B8%E5%85%B3/" rel="tag">hexo相关</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ide%E4%BD%BF%E7%94%A8/" rel="tag">ide使用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/" rel="tag">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php-filter/" rel="tag">php filter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/window/" rel="tag">window</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" rel="tag">包管理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E9%A6%96/" rel="tag">回首</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80/" rel="tag">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B9%E6%A1%88/" rel="tag">方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99/" rel="tag">正则</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%81%B0%E5%BA%A6/" rel="tag">灰度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F/" rel="tag">跨域</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Centos/" style="font-size: 16.67px;">Centos</a> <a href="/tags/Centos-7/" style="font-size: 10px;">Centos 7</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Https/" style="font-size: 10px;">Https</a> <a href="/tags/LAMP/" style="font-size: 10px;">LAMP</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/RabbitMQ/" style="font-size: 10px;">RabbitMQ</a> <a href="/tags/apache/" style="font-size: 10px;">apache</a> <a href="/tags/centos/" style="font-size: 10px;">centos</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hexo%E7%9B%B8%E5%85%B3/" style="font-size: 10px;">hexo相关</a> <a href="/tags/ide%E4%BD%BF%E7%94%A8/" style="font-size: 10px;">ide使用</a> <a href="/tags/php/" style="font-size: 13.33px;">php</a> <a href="/tags/php-filter/" style="font-size: 10px;">php filter</a> <a href="/tags/window/" style="font-size: 10px;">window</a> <a href="/tags/windows/" style="font-size: 13.33px;">windows</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 16.67px;">分布式</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 10px;">前端</a> <a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 10px;">包管理</a> <a href="/tags/%E5%9B%9E%E9%A6%96/" style="font-size: 10px;">回首</a> <a href="/tags/%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">基础</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%96%B9%E6%A1%88/" style="font-size: 10px;">方案</a> <a href="/tags/%E6%AD%A3%E5%88%99/" style="font-size: 13.33px;">正则</a> <a href="/tags/%E7%81%B0%E5%BA%A6/" style="font-size: 10px;">灰度</a> <a href="/tags/%E8%B7%A8%E5%9F%9F/" style="font-size: 13.33px;">跨域</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/05/19/%E4%BD%BF%E7%94%A8git%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E8%A2%AB%E5%B9%B2%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81/">使用git二分法查找被干掉的代码</a>
+          </li>
+        
+          <li>
+            <a href="/2019/05/19/%E7%9F%AD%E5%9C%B0%E5%9D%80%E6%96%B9%E6%A1%88/">短地址方案</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/20/apt-get%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">apt-get安装下载基本原理</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/20/Ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BARabbitMQ%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83/">Ubuntu下搭建RabbitMQ环境</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/07/%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%9F%9F%E5%90%8D%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%85%B1%E4%BA%ABcookie/">不同域名间如何共享Cookie</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Benson<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

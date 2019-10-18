@@ -67,10 +67,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-分布式ID生成方案" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-使用git二分法查找被干掉的代码" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2019/02/25/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/" class="article-date">
-  <time datetime="2019-02-25T09:55:10.000Z" itemprop="datePublished">2019-02-25</time>
+    <a href="/2019/05/19/%E4%BD%BF%E7%94%A8git%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E8%A2%AB%E5%B9%B2%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81/" class="article-date">
+  <time datetime="2019-05-19T08:41:59.000Z" itemprop="datePublished">2019-05-19</time>
 </a>
     
   </div>
@@ -81,7 +81,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/02/25/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/">分布式唯一自增ID生成方案</a>
+      <a class="article-title" href="/2019/05/19/%E4%BD%BF%E7%94%A8git%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E8%A2%AB%E5%B9%B2%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81/">使用git二分法查找被干掉的代码</a>
     </h1>
   
 
@@ -89,16 +89,248 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>记录一套支撑了千亿数据量的分布式ID唯一自增ID生成方式，基本思想还是Twitter的snowflake算法</p>
+        <p><strong>背景：</strong></p>
+<p>因为公司项目合作方式，在内网开发时都同部署于dev分支，同事间合作merge代码比较频繁，导致有时候一些新同事手误干掉了别人的代码。</p>
+<p>内网测试报错，被干掉代码的同事无故背锅躺枪，git二分法还他公道。</p>
         
           <p class="article-more-link">
-            <a href="/2019/02/25/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/#more">Read More</a>
+            <a href="/2019/05/19/%E4%BD%BF%E7%94%A8git%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E8%A2%AB%E5%B9%B2%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2019/02/25/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/" data-id="ck1uw1li80000rhn8h3dq01m0" class="article-share-link">Share</a>
+      <a data-url="http://blog.bensonwu.xyz/2019/05/19/%E4%BD%BF%E7%94%A8git%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E8%A2%AB%E5%B9%B2%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81/" data-id="ck1vjacz8000kozn8ayybgunp" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-短地址方案" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/05/19/%E7%9F%AD%E5%9C%B0%E5%9D%80%E6%96%B9%E6%A1%88/" class="article-date">
+  <time datetime="2019-05-19T08:41:59.000Z" itemprop="datePublished">2019-05-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/19/%E7%9F%AD%E5%9C%B0%E5%9D%80%E6%96%B9%E6%A1%88/">短地址方案</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>背景：</strong></p>
+<p>短地址，顾名思义就是比较短小简约的URL。</p>
+<p>短地址专属域名为sd.a，完整短地址基本样式为sq.a/xxxxx，</p>
+<p>其中xxxxx为短地址码，对应着每个需要转换的长地址。</p>
+        
+          <p class="article-more-link">
+            <a href="/2019/05/19/%E7%9F%AD%E5%9C%B0%E5%9D%80%E6%96%B9%E6%A1%88/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2019/05/19/%E7%9F%AD%E5%9C%B0%E5%9D%80%E6%96%B9%E6%A1%88/" data-id="ck1vjaczk0010ozn84pfs6gop" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%B9%E6%A1%88/" rel="tag">方案</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-apt-get安装下载基本原理" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/20/apt-get%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/" class="article-date">
+  <time datetime="2019-04-20T02:17:09.000Z" itemprop="datePublished">2019-04-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/20/apt-get%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">apt-get安装下载基本原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>背景：</strong></p>
+<p>同事勾引，突然问我知不知道apt-get安装大概流程。emmm我讲不出来。</p>
+<p>为方便各大程序猿们安装下载软件，也为提高软件即服务的质量水平，各大软件厂商自己编译好了很多二进制文件，只要系统和环境对应，下载之后就能直接安装。</p>
+<p>那各种打包好的二进制软件通过怎样的方式安装到机子上呢？</p>
+<p>各大软件安装源安装原理基本相似，拿最常用的Debian和Ubuntu下的apt-get来说事。</p>
+        
+          <p class="article-more-link">
+            <a href="/2019/04/20/apt-get%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2019/04/20/apt-get%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/" data-id="ck1vjacyt0004ozn85zwp3e4f" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Ubuntu上搭建RabbitMQ基本环境" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/03/20/Ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BARabbitMQ%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83/" class="article-date">
+  <time datetime="2019-03-20T09:17:24.000Z" itemprop="datePublished">2019-03-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/20/Ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BARabbitMQ%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83/">Ubuntu下搭建RabbitMQ环境</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>背景：</strong></p>
+<p>网上各种骚操作安装，坑爹的源码编译安装，坑爹的缺少某些步骤或者说明不详细的apt包安装，</p>
+<p>硬啃了官方英文文档推荐安装过程，</p>
+<p>记录一下从官方抽离出来的最直接安装过程，希望自建学习时不再踩坑。</p>
+<p>安装详情见官网说明：<a href="http://www.rabbitmq.com/install-debian.html" target="_blank" rel="noopener">http://www.rabbitmq.com/install-debian.html</a></p>
+        
+          <p class="article-more-link">
+            <a href="/2019/03/20/Ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BARabbitMQ%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2019/03/20/Ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BARabbitMQ%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83/" data-id="ck1vjacyu0005ozn86hne61ad" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-老生常谈，不同域名之间如何共享cookie" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/03/07/%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%9F%9F%E5%90%8D%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%85%B1%E4%BA%ABcookie/" class="article-date">
+  <time datetime="2019-03-06T16:17:51.000Z" itemprop="datePublished">2019-03-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/07/%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%9F%9F%E5%90%8D%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%85%B1%E4%BA%ABcookie/">不同域名间如何共享Cookie</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>背景：</p>
+<p>最近研究下公司的登录，登录成功后后端需要把token和用户信息以cookie的方式传送给前端，在访问其他项目时，需要带上登录信息，</p>
+<p>由于项目是前后端分离的，视是否至少是同个二级域名情况，就涉及到子域名共享cookie和跨域共享cookie的问题。</p>
+        
+          <p class="article-more-link">
+            <a href="/2019/03/07/%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%9F%9F%E5%90%8D%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%85%B1%E4%BA%ABcookie/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2019/03/07/%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%9F%9F%E5%90%8D%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%85%B1%E4%BA%ABcookie/" data-id="ck1vjaczm0014ozn8bqyic8mv" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F/" rel="tag">跨域</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-PHP的session机制" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/03/06/PHP%E7%9A%84session%E6%9C%BA%E5%88%B6/" class="article-date">
+  <time datetime="2019-03-06T03:19:06.000Z" itemprop="datePublished">2019-03-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/06/PHP%E7%9A%84session%E6%9C%BA%E5%88%B6/">PHP的SESSION机制</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>背景：</p>
+<p>用久了框架封装好的登录和验证底层，容易忘记Session实现的基本原理和过程，</p>
+<p>同事弄一个后台遇到登录共享session问题，找了比较好的文章分享，特修改下原本排版和一些内容，记录下PHP的Session机制和基本原理，便于查阅，也便于新人理解学习。</p>
+        
+          <p class="article-more-link">
+            <a href="/2019/03/06/PHP%E7%9A%84session%E6%9C%BA%E5%88%B6/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2019/03/06/PHP%E7%9A%84session%E6%9C%BA%E5%88%B6/" data-id="ck1vjacys0003ozn822djh4w0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li></ul>
@@ -110,10 +342,10 @@
 
 
   
-    <article id="post-filter-var过滤email，url，ip" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-基本的正则表达式符号含义记录" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/06/16/filter-var%E8%BF%87%E6%BB%A4email%EF%BC%8Curl%EF%BC%8Cip/" class="article-date">
-  <time datetime="2018-06-16T09:58:33.000Z" itemprop="datePublished">2018-06-16</time>
+    <a href="/2018/10/27/%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%A6%E5%8F%B7%E5%90%AB%E4%B9%89%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time datetime="2018-10-27T02:55:02.000Z" itemprop="datePublished">2018-10-27</time>
 </a>
     
   </div>
@@ -124,7 +356,51 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/16/filter-var%E8%BF%87%E6%BB%A4email%EF%BC%8Curl%EF%BC%8Cip/">filter_var过滤email，url，ip</a>
+      <a class="article-title" href="/2018/10/27/%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%A6%E5%8F%B7%E5%90%AB%E4%B9%89%E8%AE%B0%E5%BD%95/">基本的正则表达式符号含义记录</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>背景：</p>
+<p>不常常自己写正则，一些符号久了容易忘记，记录下便于查询，毕竟一些复杂的还是直接cp大法好。</p>
+        
+          <p class="article-more-link">
+            <a href="/2018/10/27/%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%A6%E5%8F%B7%E5%90%AB%E4%B9%89%E8%AE%B0%E5%BD%95/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2018/10/27/%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%A6%E5%8F%B7%E5%90%AB%E4%B9%89%E8%AE%B0%E5%BD%95/" data-id="ck1vjaczl0012ozn805x8bw01" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%AD%A3%E5%88%99/" rel="tag">正则</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-实用couchbase存储session方式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/27/%E5%AE%9E%E7%94%A8couchbase%E5%AD%98%E5%82%A8session%E6%96%B9%E5%BC%8F/" class="article-date">
+  <time datetime="2018-10-27T02:55:02.000Z" itemprop="datePublished">2018-10-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/27/%E5%AE%9E%E7%94%A8couchbase%E5%AD%98%E5%82%A8session%E6%96%B9%E5%BC%8F/">使用couchbase存储session方式</a>
     </h1>
   
 
@@ -134,16 +410,37 @@
       
         <a id="more"></a>
 
-<p>一直没注意到php内置的过滤器。一上来就直接用正则过滤常用的邮箱，殊不知原本内置函数已提供了方便。<br>还有过滤ip，url也是如此，挺方便的。记录下</p>
 <hr>
+<h3 id="一、采用memcache模式连接couchbase，只需在代码中两句修改"><a href="#一、采用memcache模式连接couchbase，只需在代码中两句修改" class="headerlink" title="一、采用memcache模式连接couchbase，只需在代码中两句修改"></a>一、采用memcache模式连接couchbase，只需在代码中两句修改</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ini_set(<span class="string">'session.save_handler'</span>, <span class="string">'memcache'</span>);</span><br><span class="line">ini_set(<span class="string">'session.save_path'</span>, <span class="string">'tcp://192.168.1.113:11211);</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意里面的11211是couchbase 里面创建的memcache类型的bucket对外的memcache端口，这种访问方式运行以memcache兼容的模式访问couchbase。</strong></p>
+<p><strong>可参考官方文档</strong>  <a href="https://docs.couchbase.com/server/6.0/learn/buckets-memory-and-storage/buckets.html" target="_blank" rel="noopener">couchbase的bucket类型</a></p>
+<p>具体配置如下图示：</p>
+<img src="/img/articleImg/bucket_type.png" width="50%" height="50%" />
+
+
+<h3 id="二、采用session自定义处理方式，用couchbase扩展添加一个sessionhandler如下"><a href="#二、采用session自定义处理方式，用couchbase扩展添加一个sessionhandler如下" class="headerlink" title="二、采用session自定义处理方式，用couchbase扩展添加一个sessionhandler如下"></a>二、采用session自定义处理方式，用couchbase扩展添加一个sessionhandler如下</h3><p><strong>摘自job项目</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化session函数</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> function <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 设置会话空间和开启会话</span></span><br><span class="line">    <span class="comment">// 使用couchbase处理session实现多台后端机器共享</span></span><br><span class="line">    <span class="keyword">if</span> (session_status() != PHP_SESSION_ACTIVE)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 使用couchbase进行会话存储</span></span><br><span class="line">        $handler = <span class="keyword">new</span> CouchbaseSessionHandler();</span><br><span class="line">        session_set_save_handler(</span><br><span class="line">            array($handler, <span class="string">'open'</span>),</span><br><span class="line">            array($handler, <span class="string">'close'</span>),</span><br><span class="line">            array($handler, <span class="string">'read'</span>),</span><br><span class="line">            array($handler, <span class="string">'write'</span>),</span><br><span class="line">            array($handler, <span class="string">'destroy'</span>),</span><br><span class="line">            array($handler, <span class="string">'gc'</span>)</span><br><span class="line">        );</span><br><span class="line">        session_name($<span class="keyword">this</span>-&gt;sessionName);</span><br><span class="line">        session_start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">namespace Framework\SessionHandler;</span><br><span class="line">use SessionHandlerInterface;</span><br><span class="line">use Framework\Core;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Couchbase处理Session</span></span><br><span class="line"><span class="comment"> * 多台后端机器共享session</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CouchbaseSessionHandler</span> <span class="keyword">implements</span> <span class="title">SessionHandlerInterface</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * couchbase实例</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> \Framework\Cache\Couchbase</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $couchbase = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * The prefix to be used in Couchbase keynames.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $key_prefix = <span class="string">'session:'</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 取session.gc_maxlifetime，</span></span><br><span class="line"><span class="comment">     * php.ini session垃圾回收配置，</span></span><br><span class="line"><span class="comment">     * 没配置则默认24分钟</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> int</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $expire = <span class="number">1440</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Set the default configuration params on init.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> function <span class="title">__construct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Open the connection to Couchbase</span></span><br><span class="line"><span class="comment">     * (called by PHP on `session_start()`)</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $save_path 保存路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $session_name session名 默认PHPSESSION</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> bool</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> function <span class="title">open</span><span class="params">($save_path, $session_name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// couchbase实例</span></span><br><span class="line">        $container = Core::init();</span><br><span class="line">        $<span class="keyword">this</span>-&gt;couchbase = $container[<span class="string">'couchbase'</span>];</span><br><span class="line">        <span class="comment">// session无操作 过期时间</span></span><br><span class="line">        $session_gc_maxlifetime = (<span class="keyword">int</span>)ini_get(<span class="string">'session.gc_maxlifetime'</span>);</span><br><span class="line">        <span class="keyword">if</span> (!empty($session_gc_maxlifetime))</span><br><span class="line">        &#123;</span><br><span class="line">            $<span class="keyword">this</span>-&gt;expire = $session_gc_maxlifetime;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (bool)$<span class="keyword">this</span>-&gt;couchbase;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Close the connection.</span></span><br><span class="line"><span class="comment">     * Called by PHP when the script ends.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> true</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> function <span class="title">close</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Read data from the session.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $session_id SESSION ID</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> function <span class="title">read</span><span class="params">($session_id)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 读取缓存</span></span><br><span class="line">        $key = $<span class="keyword">this</span>-&gt;key_prefix . $session_id;</span><br><span class="line">        $result = $<span class="keyword">this</span>-&gt;couchbase-&gt;get($key);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (empty($result) || !is_string($result))</span><br><span class="line">        &#123;</span><br><span class="line">            $result = <span class="string">''</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> $result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Write data to the session.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $session_id SESSION ID</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $session_data SESSION数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> bool</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> function <span class="title">write</span><span class="params">($session_id, $session_data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 写缓存</span></span><br><span class="line">        $key = $<span class="keyword">this</span>-&gt;key_prefix . $session_id;</span><br><span class="line">        <span class="keyword">if</span> (empty($session_data) || !is_string($session_data))</span><br><span class="line">        &#123;</span><br><span class="line">            $session_data = <span class="string">''</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        $result = $<span class="keyword">this</span>-&gt;couchbase-&gt;set(</span><br><span class="line">            $key, $session_data, $<span class="keyword">this</span>-&gt;expire</span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">return</span> (bool)$result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Delete data from the session.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $session_id SESSION ID</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> bool</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> function <span class="title">destroy</span><span class="params">($session_id)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $key = $<span class="keyword">this</span>-&gt;key_prefix . $session_id;</span><br><span class="line">        $result = $<span class="keyword">this</span>-&gt;couchbase-&gt;delete($key);</span><br><span class="line">        <span class="keyword">return</span> (bool)$result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the garbage collection.</span></span><br><span class="line"><span class="comment">     * The return value</span></span><br><span class="line"><span class="comment">     * usually TRUE on success, FALSE on failure</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> bool</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> function <span class="title">gc</span><span class="params">($maxlifetime)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>自定义处理方式后，此时执行session_start()，则处理流程如下</strong></p>
+<p>(1) 执行open($save_path,  $session_name)打开session操作句柄</p>
+<p>(2) 执行read($id)从中读取数据，这个个参数是自动传递的就是session_id(),可以通过这个值进行操作。</p>
+<p>(3) 脚本执行结束，自动执行write($id, $sess_data)，两个参数为当前会话 ID 以及 $_SESSION 中数据序列化之后的字符串作为参数</p>
+<p>(4) 假如用户需要session_destroy()，则执行destroy函数</p>
+<hr>
+<blockquote>
+<p>参考文章：<br><a href="https://www.cnblogs.com/fushanlang/p/3340521.html" target="_blank" rel="noopener">如何用couchbase存储session</a><br><a href="http://php.net/manual/zh/function.session-set-save-handler.php" target="_blank" rel="noopener">用户自定义会话存储函数</a></p>
+</blockquote>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2018/06/16/filter-var%E8%BF%87%E6%BB%A4email%EF%BC%8Curl%EF%BC%8Cip/" data-id="ck1uupqre000agen8al9k25h1" class="article-share-link">Share</a>
+      <a data-url="http://blog.bensonwu.xyz/2018/10/27/%E5%AE%9E%E7%94%A8couchbase%E5%AD%98%E5%82%A8session%E6%96%B9%E5%BC%8F/" data-id="ck1vjaczf000tozn8bfo22tzm" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php-filter/" rel="tag">php filter</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%AD%A3%E5%88%99/" rel="tag">正则</a></li></ul>
 
     </footer>
   </div>
@@ -152,10 +449,10 @@
 
 
   
-    <article id="post-使用fastcgi-finish-request提高页面相应速度" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-PHP使用Composer打包通用包发布到私仓" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/02/25/%E4%BD%BF%E7%94%A8fastcgi-finish-request%E6%8F%90%E9%AB%98%E9%A1%B5%E9%9D%A2%E7%9B%B8%E5%BA%94%E9%80%9F%E5%BA%A6/" class="article-date">
-  <time datetime="2018-02-25T09:37:35.000Z" itemprop="datePublished">2018-02-25</time>
+    <a href="/2018/10/06/PHP%E4%BD%BF%E7%94%A8Composer%E6%89%93%E5%8C%85%E9%80%9A%E7%94%A8%E5%8C%85%E5%8F%91%E5%B8%83%E5%88%B0%E7%A7%81%E4%BB%93/" class="article-date">
+  <time datetime="2018-10-06T08:00:05.000Z" itemprop="datePublished">2018-10-06</time>
 </a>
     
   </div>
@@ -166,7 +463,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/25/%E4%BD%BF%E7%94%A8fastcgi-finish-request%E6%8F%90%E9%AB%98%E9%A1%B5%E9%9D%A2%E7%9B%B8%E5%BA%94%E9%80%9F%E5%BA%A6/">使用fastcgi_finish_request提高页面相应速度</a>
+      <a class="article-title" href="/2018/10/06/PHP%E4%BD%BF%E7%94%A8Composer%E6%89%93%E5%8C%85%E9%80%9A%E7%94%A8%E5%8C%85%E5%8F%91%E5%B8%83%E5%88%B0%E7%A7%81%E4%BB%93/">通用功能类composer打包并发布到私仓</a>
     </h1>
   
 
@@ -174,18 +471,22 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文地址: <a href="http://www.laruence.com/2011/04/13/1991.html" target="_blank" rel="noopener">http://www.laruence.com/2011/04/13/1991.html</a><br>文章转自: 火丁笔记</p>
+        <p><strong>背景：</strong></p>
+<p>在实际工作过程中，一些基础的功能如字段过滤，表情转码等，开发者A为了避免重新造轮子，<br>到其他已有的项目中cp过来，可能修改一下产生一个细微差异的版本1，<br>后续开发者B又用到同样功能，再cp过来，稍微修改一下，出现版本2…<br>开发者A, B还需要在各自项目中找个合适的位置封装好，才可进行调用，<br>如此循环，佛曰：你个大xx。</p>
+<p><strong>目标：</strong><br>避免各个项目中到处有同样功能不同版本的cp代码，也为了调用方便和能统一管理所有包，实现统一封装，快捷引入到项目中使用。<br>说白了就是在偷懒一时爽，一直偷懒一直爽。</p>
         
           <p class="article-more-link">
-            <a href="/2018/02/25/%E4%BD%BF%E7%94%A8fastcgi-finish-request%E6%8F%90%E9%AB%98%E9%A1%B5%E9%9D%A2%E7%9B%B8%E5%BA%94%E9%80%9F%E5%BA%A6/#more">Read More</a>
+            <a href="/2018/10/06/PHP%E4%BD%BF%E7%94%A8Composer%E6%89%93%E5%8C%85%E9%80%9A%E7%94%A8%E5%8C%85%E5%8F%91%E5%B8%83%E5%88%B0%E7%A7%81%E4%BB%93/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2018/02/25/%E4%BD%BF%E7%94%A8fastcgi-finish-request%E6%8F%90%E9%AB%98%E9%A1%B5%E9%9D%A2%E7%9B%B8%E5%BA%94%E9%80%9F%E5%BA%A6/" data-id="ck1uupqrq000mgen87cbn0k4b" class="article-share-link">Share</a>
+      <a data-url="http://blog.bensonwu.xyz/2018/10/06/PHP%E4%BD%BF%E7%94%A8Composer%E6%89%93%E5%8C%85%E9%80%9A%E7%94%A8%E5%8C%85%E5%8F%91%E5%B8%83%E5%88%B0%E7%A7%81%E4%BB%93/" data-id="ck1vjad0m002fozn8h4vp0fl0" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" rel="tag">包管理</a></li></ul>
+
     </footer>
   </div>
   
@@ -193,10 +494,10 @@
 
 
   
-    <article id="post-php-SAPI之php运行模式" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-灰度测试环境实现" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/04/20/php-SAPI%E4%B9%8Bphp%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F/" class="article-date">
-  <time datetime="2017-04-20T03:47:16.000Z" itemprop="datePublished">2017-04-20</time>
+    <a href="/2018/09/16/%E7%81%B0%E5%BA%A6%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%AE%9E%E7%8E%B0/" class="article-date">
+  <time datetime="2018-09-16T01:55:19.000Z" itemprop="datePublished">2018-09-16</time>
 </a>
     
   </div>
@@ -207,7 +508,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/04/20/php-SAPI%E4%B9%8Bphp%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F/">php SAPI之php运行模式</a>
+      <a class="article-title" href="/2018/09/16/%E7%81%B0%E5%BA%A6%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%AE%9E%E7%8E%B0/">灰度测试环境切换实现</a>
     </h1>
   
 
@@ -215,277 +516,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>之前稍微看过，技术分享会又突然提起，索性整理下，加深理解和吹水能力2333</p>
+        <p>简单实用的的灰度测试环境切换实现</p>
         
           <p class="article-more-link">
-            <a href="/2017/04/20/php-SAPI%E4%B9%8Bphp%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F/#more">Read More</a>
+            <a href="/2018/09/16/%E7%81%B0%E5%BA%A6%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%AE%9E%E7%8E%B0/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2017/04/20/php-SAPI%E4%B9%8Bphp%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F/" data-id="ck1uupqrj000egen85i6q930a" class="article-share-link">Share</a>
+      <a data-url="http://blog.bensonwu.xyz/2018/09/16/%E7%81%B0%E5%BA%A6%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%AE%9E%E7%8E%B0/" data-id="ck1vjaczg000vozn87wh64xv9" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/" rel="tag">php</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-记事本引发的异常坑爹的bom（-uFEFF）问题" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/03/24/%E8%AE%B0%E4%BA%8B%E6%9C%AC%E5%BC%95%E5%8F%91%E7%9A%84%E5%BC%82%E5%B8%B8%E5%9D%91%E7%88%B9%E7%9A%84bom%EF%BC%88-uFEFF%EF%BC%89%E9%97%AE%E9%A2%98/" class="article-date">
-  <time datetime="2017-03-24T09:34:15.000Z" itemprop="datePublished">2017-03-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/24/%E8%AE%B0%E4%BA%8B%E6%9C%AC%E5%BC%95%E5%8F%91%E7%9A%84%E5%BC%82%E5%B8%B8%E5%9D%91%E7%88%B9%E7%9A%84bom%EF%BC%88-uFEFF%EF%BC%89%E9%97%AE%E9%A2%98/">记事本引发的异常坑爹的bom（﻿）问题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>两天前。学校一台服务器坏了。没错，就是坏了，单点，没错，没有任何备份！可怕。修完机器后，我的两个小项目让我重新部署，维护的老师直接丢了账号密码给我，自己搞。环境什么的。算了呗，反正也搞过。就是没想到遇到一个问题搞了2 3个钟。。。已吐血。<br>其实标题（）中是有东西的，就是这红点的符号\uFEFF</p>
-        
-          <p class="article-more-link">
-            <a href="/2017/03/24/%E8%AE%B0%E4%BA%8B%E6%9C%AC%E5%BC%95%E5%8F%91%E7%9A%84%E5%BC%82%E5%B8%B8%E5%9D%91%E7%88%B9%E7%9A%84bom%EF%BC%88-uFEFF%EF%BC%89%E9%97%AE%E9%A2%98/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2017/03/24/%E8%AE%B0%E4%BA%8B%E6%9C%AC%E5%BC%95%E5%8F%91%E7%9A%84%E5%BC%82%E5%B8%B8%E5%9D%91%E7%88%B9%E7%9A%84bom%EF%BC%88-uFEFF%EF%BC%89%E9%97%AE%E9%A2%98/" data-id="ck1uupqru000rgen836ww8i51" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/" rel="tag">php</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windows/" rel="tag">windows</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Laravel核心概念Container-ServiceProvider-Facade" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/02/02/Laravel%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5Container-ServiceProvider-Facade/" class="article-date">
-  <time datetime="2017-02-02T03:28:57.000Z" itemprop="datePublished">2017-02-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/02/Laravel%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5Container-ServiceProvider-Facade/">Laravel核心概念Container/ServiceProvider/Facade</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最紧要理解，网上一堆文章讲解，讲的也都很好，故偷懒下整理网上各路资料，文末附上相应链接！</p>
-        
-          <p class="article-more-link">
-            <a href="/2017/02/02/Laravel%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5Container-ServiceProvider-Facade/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2017/02/02/Laravel%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5Container-ServiceProvider-Facade/" data-id="ck1uupqsn001ngen8henq2uud" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Let-s-Encrypt-acme-tiny实现apache配置https" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/01/08/Let-s-Encrypt-acme-tiny%E5%AE%9E%E7%8E%B0apache%E9%85%8D%E7%BD%AEhttps/" class="article-date">
-  <time datetime="2017-01-08T03:54:32.000Z" itemprop="datePublished">2017-01-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/08/Let-s-Encrypt-acme-tiny%E5%AE%9E%E7%8E%B0apache%E9%85%8D%E7%BD%AEhttps/">Let&#39;s Encrypt &amp;&amp; acme-tiny实现Apache配置Https</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>什么都不说，跟上潮流搞下Https，体验下fashion!</p>
-        
-          <p class="article-more-link">
-            <a href="/2017/01/08/Let-s-Encrypt-acme-tiny%E5%AE%9E%E7%8E%B0apache%E9%85%8D%E7%BD%AEhttps/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2017/01/08/Let-s-Encrypt-acme-tiny%E5%AE%9E%E7%8E%B0apache%E9%85%8D%E7%BD%AEhttps/" data-id="ck1uupqso001ogen84ok3g2c9" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Centos/" rel="tag">Centos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Https/" rel="tag">Https</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/apache/" rel="tag">apache</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-phpstrom快捷使用" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/01/06/phpstrom%E5%BF%AB%E6%8D%B7%E4%BD%BF%E7%94%A8/" class="article-date">
-  <time datetime="2017-01-06T09:10:01.000Z" itemprop="datePublished">2017-01-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/06/phpstrom%E5%BF%AB%E6%8D%B7%E4%BD%BF%E7%94%A8/">phpstrom快捷使用</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一些快捷键和操作，整理下来，有些不常用忘了可以看看，其实也是刚考完试休闲整理下，除特别说明外都是window下ps的操作</p>
-        
-          <p class="article-more-link">
-            <a href="/2017/01/06/phpstrom%E5%BF%AB%E6%8D%B7%E4%BD%BF%E7%94%A8/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2017/01/06/phpstrom%E5%BF%AB%E6%8D%B7%E4%BD%BF%E7%94%A8/" data-id="ck1uupqrm000hgen80na39u6s" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ide%E4%BD%BF%E7%94%A8/" rel="tag">ide使用</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2016，我知道路还远" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/12/31/2016%EF%BC%8C%E6%88%91%E7%9F%A5%E9%81%93%E8%B7%AF%E8%BF%98%E8%BF%9C/" class="article-date">
-  <time datetime="2016-12-31T15:52:16.000Z" itemprop="datePublished">2016-12-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/31/2016%EF%BC%8C%E6%88%91%E7%9F%A5%E9%81%93%E8%B7%AF%E8%BF%98%E8%BF%9C/">2016，我知道路还远</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>不断发现以前的自己是个傻比，这就是人生！</p>
-        
-          <p class="article-more-link">
-            <a href="/2016/12/31/2016%EF%BC%8C%E6%88%91%E7%9F%A5%E9%81%93%E8%B7%AF%E8%BF%98%E8%BF%9C/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2016/12/31/2016%EF%BC%8C%E6%88%91%E7%9F%A5%E9%81%93%E8%B7%AF%E8%BF%98%E8%BF%9C/" data-id="ck1uupqqz0000gen84hb2enle" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%9E%E9%A6%96/" rel="tag">回首</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-生产环境之性能优化" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/09/14/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" class="article-date">
-  <time datetime="2016-09-14T05:57:39.000Z" itemprop="datePublished">2016-09-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/14/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">apache生产环境之性能优化</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>目前所知道的一点生产环境下的性能优化，后续遇到继续总结更新，不好之处还请打脸纠正，有更多优化做法望分享！</p>
-        
-          <p class="article-more-link">
-            <a href="/2016/09/14/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://blog.bensonwu.xyz/2016/09/14/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" data-id="ck1uupqrs000pgen89dgabwov" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%81%B0%E5%BA%A6/" rel="tag">灰度</a></li></ul>
 
     </footer>
   </div>
@@ -498,7 +541,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -519,7 +562,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos/" rel="tag">Centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos-7/" rel="tag">Centos 7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Https/" rel="tag">Https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LAMP/" rel="tag">LAMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apache/" rel="tag">apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/centos/" rel="tag">centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo%E7%9B%B8%E5%85%B3/" rel="tag">hexo相关</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ide%E4%BD%BF%E7%94%A8/" rel="tag">ide使用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/" rel="tag">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php-filter/" rel="tag">php filter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/window/" rel="tag">window</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E9%A6%96/" rel="tag">回首</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80/" rel="tag">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F/" rel="tag">跨域</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos/" rel="tag">Centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos-7/" rel="tag">Centos 7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Https/" rel="tag">Https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LAMP/" rel="tag">LAMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apache/" rel="tag">apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/centos/" rel="tag">centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo%E7%9B%B8%E5%85%B3/" rel="tag">hexo相关</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ide%E4%BD%BF%E7%94%A8/" rel="tag">ide使用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/" rel="tag">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php-filter/" rel="tag">php filter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/window/" rel="tag">window</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" rel="tag">包管理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E9%A6%96/" rel="tag">回首</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80/" rel="tag">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B9%E6%A1%88/" rel="tag">方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99/" rel="tag">正则</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%81%B0%E5%BA%A6/" rel="tag">灰度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F/" rel="tag">跨域</a></li></ul>
     </div>
   </div>
 
@@ -529,7 +572,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Centos/" style="font-size: 16.67px;">Centos</a> <a href="/tags/Centos-7/" style="font-size: 10px;">Centos 7</a> <a href="/tags/Https/" style="font-size: 10px;">Https</a> <a href="/tags/LAMP/" style="font-size: 10px;">LAMP</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/apache/" style="font-size: 10px;">apache</a> <a href="/tags/centos/" style="font-size: 10px;">centos</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hexo%E7%9B%B8%E5%85%B3/" style="font-size: 10px;">hexo相关</a> <a href="/tags/ide%E4%BD%BF%E7%94%A8/" style="font-size: 10px;">ide使用</a> <a href="/tags/php/" style="font-size: 13.33px;">php</a> <a href="/tags/php-filter/" style="font-size: 10px;">php filter</a> <a href="/tags/window/" style="font-size: 10px;">window</a> <a href="/tags/windows/" style="font-size: 13.33px;">windows</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 10px;">分布式</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 10px;">前端</a> <a href="/tags/%E5%9B%9E%E9%A6%96/" style="font-size: 10px;">回首</a> <a href="/tags/%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">基础</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E8%B7%A8%E5%9F%9F/" style="font-size: 10px;">跨域</a>
+      <a href="/tags/Centos/" style="font-size: 16.67px;">Centos</a> <a href="/tags/Centos-7/" style="font-size: 10px;">Centos 7</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Https/" style="font-size: 10px;">Https</a> <a href="/tags/LAMP/" style="font-size: 10px;">LAMP</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/RabbitMQ/" style="font-size: 10px;">RabbitMQ</a> <a href="/tags/apache/" style="font-size: 10px;">apache</a> <a href="/tags/centos/" style="font-size: 10px;">centos</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hexo%E7%9B%B8%E5%85%B3/" style="font-size: 10px;">hexo相关</a> <a href="/tags/ide%E4%BD%BF%E7%94%A8/" style="font-size: 10px;">ide使用</a> <a href="/tags/php/" style="font-size: 13.33px;">php</a> <a href="/tags/php-filter/" style="font-size: 10px;">php filter</a> <a href="/tags/window/" style="font-size: 10px;">window</a> <a href="/tags/windows/" style="font-size: 13.33px;">windows</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 16.67px;">分布式</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 10px;">前端</a> <a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 10px;">包管理</a> <a href="/tags/%E5%9B%9E%E9%A6%96/" style="font-size: 10px;">回首</a> <a href="/tags/%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">基础</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%96%B9%E6%A1%88/" style="font-size: 10px;">方案</a> <a href="/tags/%E6%AD%A3%E5%88%99/" style="font-size: 13.33px;">正则</a> <a href="/tags/%E7%81%B0%E5%BA%A6/" style="font-size: 10px;">灰度</a> <a href="/tags/%E8%B7%A8%E5%9F%9F/" style="font-size: 13.33px;">跨域</a>
     </div>
   </div>
 
@@ -538,7 +581,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li></ul>
     </div>
   </div>
 
@@ -551,23 +594,23 @@
       <ul>
         
           <li>
-            <a href="/2019/02/25/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/">分布式唯一自增ID生成方案</a>
+            <a href="/2019/05/19/%E4%BD%BF%E7%94%A8git%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E8%A2%AB%E5%B9%B2%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81/">使用git二分法查找被干掉的代码</a>
           </li>
         
           <li>
-            <a href="/2018/06/16/filter-var%E8%BF%87%E6%BB%A4email%EF%BC%8Curl%EF%BC%8Cip/">filter_var过滤email，url，ip</a>
+            <a href="/2019/05/19/%E7%9F%AD%E5%9C%B0%E5%9D%80%E6%96%B9%E6%A1%88/">短地址方案</a>
           </li>
         
           <li>
-            <a href="/2018/02/25/%E4%BD%BF%E7%94%A8fastcgi-finish-request%E6%8F%90%E9%AB%98%E9%A1%B5%E9%9D%A2%E7%9B%B8%E5%BA%94%E9%80%9F%E5%BA%A6/">使用fastcgi_finish_request提高页面相应速度</a>
+            <a href="/2019/04/20/apt-get%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">apt-get安装下载基本原理</a>
           </li>
         
           <li>
-            <a href="/2017/04/20/php-SAPI%E4%B9%8Bphp%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F/">php SAPI之php运行模式</a>
+            <a href="/2019/03/20/Ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BARabbitMQ%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83/">Ubuntu下搭建RabbitMQ环境</a>
           </li>
         
           <li>
-            <a href="/2017/03/24/%E8%AE%B0%E4%BA%8B%E6%9C%AC%E5%BC%95%E5%8F%91%E7%9A%84%E5%BC%82%E5%B8%B8%E5%9D%91%E7%88%B9%E7%9A%84bom%EF%BC%88-uFEFF%EF%BC%89%E9%97%AE%E9%A2%98/">记事本引发的异常坑爹的bom（﻿）问题</a>
+            <a href="/2019/03/07/%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%9F%9F%E5%90%8D%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%85%B1%E4%BA%ABcookie/">不同域名间如何共享Cookie</a>
           </li>
         
       </ul>

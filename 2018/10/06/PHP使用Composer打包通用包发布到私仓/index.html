@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>通用功能类composer打包并发布到私仓 | Benson&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="背景： 在实际工作过程中，一些基础的功能如字段过滤，表情转码等，开发者A为了避免重新造轮子，到其他已有的项目中cp过来，可能修改一下产生一个细微差异的版本1，后续开发者B又用到同样功能，再cp过来，稍微修改一下，出现版本2…开发者A, B还需要在各自项目中找个合适的位置封装好，才可进行调用，如此循环，佛曰：你个大xx。 目标：避免各个项目中到处有同样功能不同版本的cp代码，也为了调用方便和能统一管">
+<meta name="keywords" content="包管理,PHP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通用功能类composer打包并发布到私仓">
+<meta property="og:url" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;2018&#x2F;10&#x2F;06&#x2F;PHP%E4%BD%BF%E7%94%A8Composer%E6%89%93%E5%8C%85%E9%80%9A%E7%94%A8%E5%8C%85%E5%8F%91%E5%B8%83%E5%88%B0%E7%A7%81%E4%BB%93&#x2F;index.html">
+<meta property="og:site_name" content="Benson&#39;s blog">
+<meta property="og:description" content="背景： 在实际工作过程中，一些基础的功能如字段过滤，表情转码等，开发者A为了避免重新造轮子，到其他已有的项目中cp过来，可能修改一下产生一个细微差异的版本1，后续开发者B又用到同样功能，再cp过来，稍微修改一下，出现版本2…开发者A, B还需要在各自项目中找个合适的位置封装好，才可进行调用，如此循环，佛曰：你个大xx。 目标：避免各个项目中到处有同样功能不同版本的cp代码，也为了调用方便和能统一管">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;emojiLib.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;packages.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;packages_web.png">
+<meta property="og:updated_time" content="2019-10-18T02:26:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;emojiLib.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Benson&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Benson&#39;s blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">生活就是不停地战斗</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.bensonwu.xyz"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-PHP使用Composer打包通用包发布到私仓" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/06/PHP%E4%BD%BF%E7%94%A8Composer%E6%89%93%E5%8C%85%E9%80%9A%E7%94%A8%E5%8C%85%E5%8F%91%E5%B8%83%E5%88%B0%E7%A7%81%E4%BB%93/" class="article-date">
+  <time datetime="2018-10-06T08:00:05.000Z" itemprop="datePublished">2018-10-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      通用功能类composer打包并发布到私仓
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>背景：</strong></p>
+<p>在实际工作过程中，一些基础的功能如字段过滤，表情转码等，开发者A为了避免重新造轮子，<br>到其他已有的项目中cp过来，可能修改一下产生一个细微差异的版本1，<br>后续开发者B又用到同样功能，再cp过来，稍微修改一下，出现版本2…<br>开发者A, B还需要在各自项目中找个合适的位置封装好，才可进行调用，<br>如此循环，佛曰：你个大xx。</p>
+<p><strong>目标：</strong><br>避免各个项目中到处有同样功能不同版本的cp代码，也为了调用方便和能统一管理所有包，实现统一封装，快捷引入到项目中使用。<br>说白了就是在偷懒一时爽，一直偷懒一直爽。</p>
+<a id="more"></a>
+
+<hr>
+<p>打包存放的仓库有两种类型</p>
+<ol>
+<li>开源，则可直接发布到Packagist仓库</li>
+<li>私有，则需自建私仓存放<br>结合公司目前情况，选择第2种，描述制作composer包和自建私仓存放过程，步骤如下。</li>
+</ol>
+<hr>
+<h2 id="实现方案一-简单粗暴"><a href="#实现方案一-简单粗暴" class="headerlink" title="实现方案一 (简单粗暴)"></a>实现方案一 (简单粗暴)</h2><p>创建自己composer并发布到内网，步骤同方案二前面步骤，后直接在composer.json文件中设置好仓库即可引用</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"repositories"</span>: [</span><br><span class="line">     &#123;</span><br><span class="line">       <span class="attr">"type"</span>: <span class="string">"git"</span>,</span><br><span class="line">       <span class="attr">"url"</span>: <span class="string">"git@gitlab.benson.com:benson/emojiLib.git"</span></span><br><span class="line">     &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="实现方案二，使用satis统一管理"><a href="#实现方案二，使用satis统一管理" class="headerlink" title="实现方案二，使用satis统一管理"></a>实现方案二，使用satis统一管理</h2><h3 id="1-创建自己的Composer包，两步"><a href="#1-创建自己的Composer包，两步" class="headerlink" title="1. 创建自己的Composer包，两步"></a>1. 创建自己的Composer包，两步</h3><h4 id="1-填写包描述信息"><a href="#1-填写包描述信息" class="headerlink" title="(1) 填写包描述信息"></a>(1) 填写包描述信息</h4><p>Composer包的描述信息存放在composer.json文件中，可自建composer.json文件，手动填写必要的字段信息；<br>也可以用composer init命令，交互式的输入包信息，生成composer.json文件后再补全其他字段信息。<br>最后的composer.json内容大概如下：(emoji表情转码包作为示例)</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"benson/emoji-sdk-php"</span>,</span><br><span class="line">    <span class="attr">"description"</span>: <span class="string">"benson emoji SDK for PHP"</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"library"</span>,</span><br><span class="line">    <span class="attr">"require"</span>: &#123;</span><br><span class="line">        <span class="attr">"php"</span>:<span class="string">"&gt;=5.6"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"license"</span>: <span class="string">"MIT"</span>,</span><br><span class="line">    <span class="attr">"authors"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"name"</span>: <span class="string">"benson"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"minimum-stability"</span>: <span class="string">"stable"</span>,</span><br><span class="line">    <span class="attr">"autoload"</span>: &#123;</span><br><span class="line">        <span class="attr">"psr-4"</span>: &#123;<span class="attr">"Emoji\\"</span>: <span class="string">"src/Emoji"</span>&#125;     // psr<span class="number">-4</span>规范，Emoji为转码类的namespace， src/Emoji为转码类文件所在目录</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>以上内容基本上是一个Composer包的必备字段。其他字段可参考Composer官网的composer.json说明。需注意标记为root-only的字段，root-only表示当前包为主项目时才生效。例如require-dev字段，在当前项目中开发，字段内的包会下载放到vendor文件夹内；如果该项目被其他项目引用，则该字段的值被忽略，引用的包不会被下载。</p>
+</blockquote>
+<h3 id="2-写代码"><a href="#2-写代码" class="headerlink" title="(2) 写代码"></a>(2) 写代码</h3><p>在src目录下封装好转码类</p>
+<img src="/img/articleImg/emojiLib.png" width="50%" height="50%" />
+
+<h3 id="2-托管emojiLib项目到gitlab独立成项目供后续引用"><a href="#2-托管emojiLib项目到gitlab独立成项目供后续引用" class="headerlink" title="2. 托管emojiLib项目到gitlab独立成项目供后续引用"></a>2. 托管emojiLib项目到gitlab独立成项目供后续引用</h3><p>具体git操作不再赘述</p>
+<h3 id="3-建立私仓"><a href="#3-建立私仓" class="headerlink" title="3. 建立私仓"></a>3. 建立私仓</h3><h4 id="1-使用Composer官方提供的私仓解决方案satis-简单的静态Composer仓库生成器"><a href="#1-使用Composer官方提供的私仓解决方案satis-简单的静态Composer仓库生成器" class="headerlink" title="(1) 使用Composer官方提供的私仓解决方案satis (简单的静态Composer仓库生成器)"></a>(1) 使用Composer官方提供的私仓解决方案satis (简单的静态Composer仓库生成器)</h4><h5 id="安装satis"><a href="#安装satis" class="headerlink" title="安装satis"></a>安装satis</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /www/web/</span><br><span class="line"></span><br><span class="line">composer create-project composer/satis --keep-vcs</span><br><span class="line"></span><br><span class="line">mv satis packages-benson-com</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> packages-benson-com</span><br></pre></td></tr></table></figure>
+
+<h5 id="配置satis"><a href="#配置satis" class="headerlink" title="配置satis"></a>配置satis</h5><p>satis的配置是通过satis.json进行的，在当前目录新建一个satis.json如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"benson Repository"</span>,</span><br><span class="line">    <span class="attr">"homepage"</span>: <span class="string">"http://packages.benson.com"</span>,</span><br><span class="line">    <span class="attr">"repositories"</span>: [</span><br><span class="line">        &#123;<span class="attr">"type"</span>: <span class="string">"vcs"</span>, <span class="attr">"url"</span>: <span class="string">"git@gitlab.benson.com:benson/emojiLib.git"</span>&#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"require"</span>: &#123;</span><br><span class="line">        <span class="attr">"benson/emoji-sdk-php"</span>: <span class="string">"*"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"archive"</span>: &#123;</span><br><span class="line">        <span class="attr">"directory"</span>: <span class="string">"dist"</span>,</span><br><span class="line">        <span class="attr">"format"</span>: <span class="string">"zip"</span>,</span><br><span class="line">        <span class="attr">"prefix-url"</span>: <span class="string">"http://packages.115rc.com/"</span>,</span><br><span class="line">        <span class="attr">"skip-dev"</span>: <span class="literal">false</span>    // 跳过指定为dev环境的包</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>字段解释：</p>
+<ul>
+<li>name：仓库的名字，自定义</li>
+<li>homepage：仓库建立之后的的主页地址</li>
+<li>repositories：指定去哪获取包，url中需要带.git，其中的url为emoji类的gitlab地址，ssh方式的话需要配置公钥后才可正常拉取代码</li>
+<li>require：指定获取哪些包，如果想获取所有包，使用require-all: true,</li>
+<li>archive (存档)：将需要require的包压缩并下载存放在directory字段指定的目录下，缓存在packages.115rc.com仓库中，这样每次其他项目composer update时就不需要先从gitlab上先clone了，只需要直接从packages.115rc.com仓库下载，速度会快一点</li>
+</ul>
+<h4 id="2-执行脚本初始化项目，拉取并下载全部功能包"><a href="#2-执行脚本初始化项目，拉取并下载全部功能包" class="headerlink" title="(2) 执行脚本初始化项目，拉取并下载全部功能包"></a>(2) 执行脚本初始化项目，拉取并下载全部功能包</h4><p>执行命令前，需要配置ssh公钥保证此时有拉取emojiLib的gitlab代码的权限 <a href="mailto:git@gitlab.benson.com" target="_blank" rel="noopener">git@gitlab.benson.com</a>:benson/emojiLib.git</p>
+<p>传送门：<a href="http://gitlab.benson.com/help/ssh/README" target="_blank" rel="noopener">生成ssh公钥方法</a>，生成完后添加到gitlab项目配置中。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">php bin/satis build satis.json ./public -v   // 包含全部包</span><br><span class="line">或</span><br><span class="line">php bin/satis build satis.json ./public this/package that/other-package  // 只包含部分包</span><br></pre></td></tr></table></figure>
+
+<p>命令解释：</p>
+<ul>
+<li>php bin/satis build使用php执行脚本bin/satis中的build命令</li>
+<li>satis.json 指定读取的配置文件</li>
+<li>./public 输出的目录</li>
+<li>-v 显示被索引的包，运行过程中报错信息也会显示，便于调试</li>
+</ul>
+<p>生成的目录结构图：</p>
+<img src="/img/articleImg/packages.png" width="50%" height="50%" />
+
+<h3 id="4-将packages-benson-com项目发布到gitlab项目上并部署到内网服务器"><a href="#4-将packages-benson-com项目发布到gitlab项目上并部署到内网服务器" class="headerlink" title="4. 将packages.benson.com项目发布到gitlab项目上并部署到内网服务器"></a>4. 将packages.benson.com项目发布到gitlab项目上并部署到内网服务器</h3><h3 id="5-配置可访问的packages-benson-com虚拟域名"><a href="#5-配置可访问的packages-benson-com虚拟域名" class="headerlink" title="5. 配置可访问的packages.benson.com虚拟域名"></a>5. 配置可访问的packages.benson.com虚拟域名</h3><p>Nginx配置</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">   <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">   <span class="attribute">server_name</span> packages.benson.com;</span><br><span class="line"></span><br><span class="line">   <span class="attribute">root</span>  /www/web/packages-benson-com/public;</span><br><span class="line">   <span class="attribute">index</span> index.php index.html;</span><br><span class="line"></span><br><span class="line">   <span class="attribute">location</span> <span class="regexp">~ \.php$</span> &#123;</span><br><span class="line">           <span class="attribute">try_files</span> <span class="variable">$uri</span> /<span class="number">404</span>.html;</span><br><span class="line">           <span class="attribute">fastcgi_pass</span>   <span class="number">127.0.0.1:9000</span>;</span><br><span class="line">           <span class="attribute">fastcgi_index</span>  index.php;</span><br><span class="line">           <span class="attribute">fastcgi_param</span>  SCRIPT_FILENAME  <span class="variable">$document_root</span><span class="variable">$fastcgi_script_name</span>;</span><br><span class="line">           <span class="attribute">include</span> /etc/nginx/fastcgi_params;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="attribute">error_page</span>  <span class="number">404</span>  /<span class="number">404</span>.html;</span><br><span class="line">   <span class="attribute">error_page</span>  <span class="number">403</span>  /<span class="number">403</span>.html;</span><br><span class="line">   <span class="attribute">error_page</span>  <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /50x.html;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   <span class="attribute">location</span> = /favicon.ico &#123;</span><br><span class="line">        <span class="attribute">log_not_found</span> <span class="literal">off</span>;</span><br><span class="line">        <span class="attribute">access_log</span> <span class="literal">off</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="6-以上步骤完成后，访问http-packages-benson-com-可看到Satis仓库页面"><a href="#6-以上步骤完成后，访问http-packages-benson-com-可看到Satis仓库页面" class="headerlink" title="6. 以上步骤完成后，访问http://packages.benson.com  可看到Satis仓库页面"></a>6. 以上步骤完成后，访问<a href="http://packages.benson.com" target="_blank" rel="noopener">http://packages.benson.com</a>  可看到Satis仓库页面</h3><img src="/img/articleImg/packages_web.png" width="50%" height="50%" />
+
+<h3 id="7-最后，其他项目引入时，配置好composer-json并执行composer-require-benson-emoji-sdk-php"><a href="#7-最后，其他项目引入时，配置好composer-json并执行composer-require-benson-emoji-sdk-php" class="headerlink" title="7. 最后，其他项目引入时，配置好composer.json并执行composer require benson/emoji-sdk-php"></a>7. 最后，其他项目引入时，配置好composer.json并执行composer require benson/emoji-sdk-php</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"require"</span>: &#123;</span><br><span class="line">    <span class="attr">"benson/emoji-sdk-php"</span>: <span class="string">"*"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"minimum-stability"</span>: <span class="string">"dev"</span>,</span><br><span class="line">  <span class="attr">"repositories"</span>: [&#123;</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"composer"</span>,</span><br><span class="line">    <span class="attr">"url"</span>: <span class="string">"http://packages.benson.com"</span></span><br><span class="line">  &#125;],</span><br><span class="line">  <span class="attr">"config"</span>: &#123;</span><br><span class="line">    <span class="attr">"secure-http"</span>: <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>composer.json配置文件需要注意两点：</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>如果benson/emoji-sdk-php包的composer.json文件没有version字段(或不是稳定版)，<br>这里的minimum-stability值要是dev（默认是stable），否则composer require 115/emoji-sdk-php时会抛错</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>记得配置”config”: {“secure-http”: false}，否则项目安装的时候还是提示项目不是HTTPS而失败。</li>
+</ul>
+</blockquote>
+<p>在项目中使用时：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">require</span> dirname(dirname(<span class="keyword">__DIR__</span>)) . <span class="string">"/vendor/autoload.php"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Emoji</span>\<span class="title">EmojiParser</span>;</span><br><span class="line"></span><br><span class="line">$test = <span class="keyword">new</span> EmojiParser();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输入的带有表情的字符串</span></span><br><span class="line">$input = $_GET[<span class="string">'input'</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转码后可存储于数据库utf8mb4_bin字段类型的字符串</span></span><br><span class="line">$str = $test-&gt;emojiEncode($input);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 原始输入</span></span><br><span class="line">$output = $test-&gt;emojiDecode($str);</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="8-在当前内网已经搭建完成packages-115-com项目基础上封装通用包"><a href="#8-在当前内网已经搭建完成packages-115-com项目基础上封装通用包" class="headerlink" title="8. 在当前内网已经搭建完成packages.115.com项目基础上封装通用包"></a>8. 在当前内网已经搭建完成packages.115.com项目基础上封装通用包</h3><p>步骤主要如下：</p>
+<ol>
+<li>开发者按照上面步骤封装好通用包，请求管理员在gitlab上新建通用包的新项目单独存放</li>
+<li>gitlab管理员给开发者添加packages-benson-com项目代码权限</li>
+<li>开发者拉取packages-benson-com项目代码到本地进行通用包的封装</li>
+<li>修改上述步骤中的satis.json文件，添加通用包的gitlat地址到repositories字段中 (见上面“配置satis”一小节的步骤)</li>
+<li>按照“配置satis”一小节步骤走完后，通用包已引入，将代码提交到packages-benson-com的gitlab仓库，此时通用包已上传到私仓。</li>
+</ol>
+<blockquote>
+<p>优点：</p>
+</blockquote>
+<ol>
+<li>比较简单，</li>
+<li>也避免了开发人员不熟悉composer update和install执行命令而升级了依赖包的版本造成不可预料问题的情况。</li>
+</ol>
+<blockquote>
+<p>缺点：<a href="https://docs.phpcomposer.com/faqs/should-i-commit-the-dependencies-in-my-vendor-directory.html" target="_blank" rel="noopener">官方说法</a></p>
+</blockquote>
+<blockquote>
+<p>个人觉得在现有情况下，自己的包数量不多且不庞大，这些说法还是可接受的。</p>
+</blockquote>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>1、Composer主要使用命令空间配合自动加载原理实现了一套方便的自动加载机制<br>自动加载主要带来的好处有：</p>
+<blockquote>
+<ul>
+<li>使用类之前无需 include / require</li>
+</ul>
+</blockquote>
+<ul>
+<li>使用类的时候才会 include / require 文件，实现了 lazy loading ，避免了 include / require 多余文件。</li>
+<li>无需考虑引入 类的实际磁盘地址 ，实现了逻辑和实体文件的分离。</li>
+</ul>
+<p>2、各个语言工具都有自己的包管理器，各种各样开源的包避免了自己重复造轮，一条命令开箱即用，提高开发效率。</p>
+<p>3、借此机会抽离封装常用功能类，建立私仓，了解下Composer基本原理和使用，<br>了解Composer如何运用的PHP的自动加载机制，以及PHP自动加载从__autoload时代演变到spl_autoload_register()</p>
+<blockquote>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://tlanyan.me/php-review-create-self-composer-package/" target="_blank" rel="noopener">PHP回顾之创建自己的Composer包</a></li>
+<li><a href="https://blog.csdn.net/samxx8/article/details/78131546" target="_blank" rel="noopener">使用 satis 搭建一个私有的 Composer 包仓库</a></li>
+<li><a href="https://hihozhou.com/blog/2018/09/27/satis.html" target="_blank" rel="noopener">搭建私有的composer包</a></li>
+<li><a href="https://www.jianshu.com/p/878e6cabf558" target="_blank" rel="noopener">手把手教你如何搭建Composer私有仓库</a></li>
+<li><a href="https://segmentfault.com/a/1190000014948542" target="_blank" rel="noopener">深入解析 composer 的自动加载原理</a></li>
+<li><a href="http://leoyang90.cn/2017/03/13/Composer%20Autoload%20Source%20Reading%20%E2%80%94%E2%80%94%20Start%20and%20Initialize" target="_blank" rel="noopener">Composer的Autoload源码实现</a></li>
+</ol>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.bensonwu.xyz/2018/10/06/PHP%E4%BD%BF%E7%94%A8Composer%E6%89%93%E5%8C%85%E9%80%9A%E7%94%A8%E5%8C%85%E5%8F%91%E5%B8%83%E5%88%B0%E7%A7%81%E4%BB%93/" data-id="ck1vjad0m002fozn8h4vp0fl0" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" rel="tag">包管理</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/10/27/%E5%AE%9E%E7%94%A8couchbase%E5%AD%98%E5%82%A8session%E6%96%B9%E5%BC%8F/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          使用couchbase存储session方式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/09/16/%E7%81%B0%E5%BA%A6%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%AE%9E%E7%8E%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">灰度测试环境切换实现</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BB%BA%E7%AB%99/">建站</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos/" rel="tag">Centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Centos-7/" rel="tag">Centos 7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Https/" rel="tag">Https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LAMP/" rel="tag">LAMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laravel/" rel="tag">Laravel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apache/" rel="tag">apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/centos/" rel="tag">centos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo%E7%9B%B8%E5%85%B3/" rel="tag">hexo相关</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ide%E4%BD%BF%E7%94%A8/" rel="tag">ide使用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/" rel="tag">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php-filter/" rel="tag">php filter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/window/" rel="tag">window</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" rel="tag">包管理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E9%A6%96/" rel="tag">回首</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80/" rel="tag">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B9%E6%A1%88/" rel="tag">方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99/" rel="tag">正则</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%81%B0%E5%BA%A6/" rel="tag">灰度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F/" rel="tag">跨域</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Centos/" style="font-size: 16.67px;">Centos</a> <a href="/tags/Centos-7/" style="font-size: 10px;">Centos 7</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Https/" style="font-size: 10px;">Https</a> <a href="/tags/LAMP/" style="font-size: 10px;">LAMP</a> <a href="/tags/Laravel/" style="font-size: 10px;">Laravel</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/RabbitMQ/" style="font-size: 10px;">RabbitMQ</a> <a href="/tags/apache/" style="font-size: 10px;">apache</a> <a href="/tags/centos/" style="font-size: 10px;">centos</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hexo%E7%9B%B8%E5%85%B3/" style="font-size: 10px;">hexo相关</a> <a href="/tags/ide%E4%BD%BF%E7%94%A8/" style="font-size: 10px;">ide使用</a> <a href="/tags/php/" style="font-size: 13.33px;">php</a> <a href="/tags/php-filter/" style="font-size: 10px;">php filter</a> <a href="/tags/window/" style="font-size: 10px;">window</a> <a href="/tags/windows/" style="font-size: 13.33px;">windows</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 16.67px;">分布式</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 10px;">前端</a> <a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 10px;">包管理</a> <a href="/tags/%E5%9B%9E%E9%A6%96/" style="font-size: 10px;">回首</a> <a href="/tags/%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">基础</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%96%B9%E6%A1%88/" style="font-size: 10px;">方案</a> <a href="/tags/%E6%AD%A3%E5%88%99/" style="font-size: 13.33px;">正则</a> <a href="/tags/%E7%81%B0%E5%BA%A6/" style="font-size: 10px;">灰度</a> <a href="/tags/%E8%B7%A8%E5%9F%9F/" style="font-size: 13.33px;">跨域</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/05/19/%E4%BD%BF%E7%94%A8git%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E8%A2%AB%E5%B9%B2%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81/">使用git二分法查找被干掉的代码</a>
+          </li>
+        
+          <li>
+            <a href="/2019/05/19/%E7%9F%AD%E5%9C%B0%E5%9D%80%E6%96%B9%E6%A1%88/">短地址方案</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/20/apt-get%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">apt-get安装下载基本原理</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/20/Ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BARabbitMQ%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83/">Ubuntu下搭建RabbitMQ环境</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/07/%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%9F%9F%E5%90%8D%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%85%B1%E4%BA%ABcookie/">不同域名间如何共享Cookie</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Benson<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
