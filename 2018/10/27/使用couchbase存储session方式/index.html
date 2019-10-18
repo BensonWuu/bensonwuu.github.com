@@ -7,16 +7,16 @@
   
   <title>使用couchbase存储session方式 | Benson&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一、采用memcache模式连接couchbase，只需在代码中两句修改12ini_set(&amp;apos;session.save_handler&amp;apos;, &amp;apos;memcache&amp;apos;);ini_set(&amp;apos;session.save_path&amp;apos;, &amp;apos;tcp:&#x2F;&#x2F;192.168.1.113:11211);  注意里面的11211是couchbase 里面创建的memcache类型的bucket对外的memcache端口">
+  <meta name="description" content="介绍下分布式环境下登录用couchbase保存相关信息基本过程">
 <meta name="keywords" content="正则">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用couchbase存储session方式">
 <meta property="og:url" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;2018&#x2F;10&#x2F;27&#x2F;%E4%BD%BF%E7%94%A8couchbase%E5%AD%98%E5%82%A8session%E6%96%B9%E5%BC%8F&#x2F;index.html">
 <meta property="og:site_name" content="Benson&#39;s blog">
-<meta property="og:description" content="一、采用memcache模式连接couchbase，只需在代码中两句修改12ini_set(&amp;apos;session.save_handler&amp;apos;, &amp;apos;memcache&amp;apos;);ini_set(&amp;apos;session.save_path&amp;apos;, &amp;apos;tcp:&#x2F;&#x2F;192.168.1.113:11211);  注意里面的11211是couchbase 里面创建的memcache类型的bucket对外的memcache端口">
+<meta property="og:description" content="介绍下分布式环境下登录用couchbase保存相关信息基本过程">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;bucket_type.png">
-<meta property="og:updated_time" content="2019-10-18T03:10:22.000Z">
+<meta property="og:updated_time" content="2019-10-18T03:52:33.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;blog.bensonwu.xyz&#x2F;img&#x2F;articleImg&#x2F;bucket_type.png">
   
@@ -91,9 +91,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
+        <p>介绍下分布式环境下登录用couchbase保存相关信息基本过程</p>
+<a id="more"></a>
 
 
+<hr>
 <h3 id="一、采用memcache模式连接couchbase，只需在代码中两句修改"><a href="#一、采用memcache模式连接couchbase，只需在代码中两句修改" class="headerlink" title="一、采用memcache模式连接couchbase，只需在代码中两句修改"></a>一、采用memcache模式连接couchbase，只需在代码中两句修改</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ini_set(<span class="string">'session.save_handler'</span>, <span class="string">'memcache'</span>);</span><br><span class="line">ini_set(<span class="string">'session.save_path'</span>, <span class="string">'tcp://192.168.1.113:11211);</span></span><br></pre></td></tr></table></figure>
 
 <p><strong>注意里面的11211是couchbase 里面创建的memcache类型的bucket对外的memcache端口，这种访问方式运行以memcache兼容的模式访问couchbase。</strong></p>
