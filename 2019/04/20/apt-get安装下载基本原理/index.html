@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Benson&#39;s blog">
 <meta property="og:description" content="背景： 同事勾引，突然问我知不知道apt-get安装大概流程。emmm我讲不出来。 为方便各大程序猿们安装下载软件，也为提高软件即服务的质量水平，各大软件厂商自己编译好了很多二进制文件，只要系统和环境对应，下载之后就能直接安装。 那各种打包好的二进制软件通过怎样的方式安装到机子上呢？ 各大软件安装源安装原理基本相似，拿最常用的Debian和Ubuntu下的apt-get来说事。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-10-18T02:56:04.000Z">
+<meta property="og:updated_time" content="2019-10-18T02:56:31.000Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Benson&#39;s blog" type="application/atom+xml">
@@ -97,9 +97,7 @@
 <a id="more"></a>
 
 
-<h3 id="源"><a href="#源" class="headerlink" title="源"></a>源</h3><blockquote>
-<p>源和软件仓库实际上是一个意思，厂商将编译后的二进制文件和软件信息存放至服务器，<br>用户需要安装软件时，包管理器自动分析本机和容器（repository）内的信息，下载需要的包并自动安装，安装后将新安装的软件信息存放至本地数据库。<br>如果有前置软件没有安装，rpm和dpkg会提示安装失败，也可以强制安装，yum和apt会自动安装全部需要的依赖包。更新和卸载也同理。<br>这些源的位置记录在/etc/apt/sources.list，我们可以手动修改这些文件，<br>但是修改重要系统配置前先备份是一个好习惯（sudo cp /etc/apt/sources.list /etc/apt/sources.list_backup）。</p>
-</blockquote>
+<h3 id="源"><a href="#源" class="headerlink" title="源"></a>源</h3><p>源和软件仓库实际上是一个意思，厂商将编译后的二进制文件和软件信息存放至服务器，<br>用户需要安装软件时，包管理器自动分析本机和容器（repository）内的信息，下载需要的包并自动安装，安装后将新安装的软件信息存放至本地数据库。<br>如果有前置软件没有安装，rpm和dpkg会提示安装失败，也可以强制安装，yum和apt会自动安装全部需要的依赖包。更新和卸载也同理。<br>这些源的位置记录在/etc/apt/sources.list，我们可以手动修改这些文件，<br>但是修改重要系统配置前先备份是一个好习惯（sudo cp /etc/apt/sources.list /etc/apt/sources.list_backup）。</p>
 <h3 id="apt-get命令相关的一些目录和文件"><a href="#apt-get命令相关的一些目录和文件" class="headerlink" title="apt-get命令相关的一些目录和文件"></a>apt-get命令相关的一些目录和文件</h3><ol>
 <li>/etc/apt/source.list文件：存放包来源的软件源站点</li>
 <li>/etc/apt/sources.list.d目录：存放归类好的软件源站点.list文件，文件作用同source.list</li>
